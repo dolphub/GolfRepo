@@ -1,0 +1,5 @@
+C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishLibrary\bin\Debug\GoFishLibrary.dll
+C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishLibrary\bin\Debug\GoFishLibrary.pdb
+C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishLibrary\obj\Debug\GoFishLibrary.csprojResolveAssemblyReference.cache
+C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishLibrary\obj\Debug\GoFishLibrary.dll
+C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishLibrary\obj\Debug\GoFishLibrary.pdb
