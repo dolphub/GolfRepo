@@ -34,3 +34,5 @@ C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfClient\obj\Debug\Golf
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfClient\obj\Debug\GolfClient.g.resources
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfClient\obj\Debug\GolfClient.Properties.Resources.resources
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfClient\obj\Debug\GolfClient.csproj.GenerateResource.Cache
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfClient\obj\Debug\PlayerTemplate.baml
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfClient\obj\Debug\PlayerTemplate.g.cs

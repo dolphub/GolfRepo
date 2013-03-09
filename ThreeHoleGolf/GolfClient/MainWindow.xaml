@@ -1,108 +1,130 @@
 ﻿<Window x:Class="GolfClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="600" Width="800">
-    <Grid RenderTransformOrigin="0.5,0.5">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="65*"/>
-            <ColumnDefinition Width="35*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="65*"/>
-            <RowDefinition Height="25*"/>
-        </Grid.RowDefinitions>
-       
-        <!-- Main UI that all users share the vision of -->
-        <Grid>
+        Title="MainWindow" Height="600" Width="1000" ResizeMode="NoResize">
+
+    <Border BorderBrush="Black" BorderThickness="3" >
+        <Grid RenderTransformOrigin="0.5,0.5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30*" />
-                <ColumnDefinition Width="70*" />
+                <ColumnDefinition Width="55*"/>
+                <ColumnDefinition Width="45*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="50*"/>
+                <RowDefinition Height="65*"/>
+                <RowDefinition Height="25*"/>
             </Grid.RowDefinitions>
-            
-            <Button x:Name="btn_blindDeck" Height="150" Width="100" >
-                <Button.Template>
-                    <ControlTemplate>
-                        <Image x:Name="img_blindDeck" Height="150" Width="100"/>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
 
-            <Button x:Name="btn_discardDeck" Height="150" Width="100" Grid.Row="1" >
-                <Button.Template>
-                    <ControlTemplate>
-                        <Image x:Name="img_discardDeck" Height="150" Width="100"/>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+            <!-- Main UI that all users share the vision of -->
+            <Border BorderBrush="Black" BorderThickness="2" Grid.Row="0" >
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*" />
+                        <ColumnDefinition Width="70*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50*"/>
+                        <RowDefinition Height="50*"/>
+                    </Grid.RowDefinitions>
 
-            <Button x:Name="btn_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1">
-                <Button.Template>
-                    <ControlTemplate>
-                        <Image x:Name="img_drawnCard" Height="250" Width="175"  />
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+                    <Button x:Name="btn_blindDeck" Height="150" Width="100" >
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image x:Name="img_blindDeck" Source="Images/BackCard.jpg" Height="150" Width="100"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button x:Name="btn_discardDeck" Height="150" Width="100" Grid.Row="1" >
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image x:Name="img_discardDeck" Source="Images/BackCard.jpg" Height="150" Width="100"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button x:Name="btn_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image x:Name="img_drawnCard" Source="Images/BackCard.jpg" Height="250" Width="175"  />
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+
+
+            <Border BorderBrush="Black" BorderThickness="2" Grid.Column="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" >
+                    <Grid Grid.Column="1">
+                        <StackPanel x:Name="PlayerGrid" VerticalAlignment="Top" Orientation="Vertical">
+                            <Button x:Name="testTemplate" Click="testTemplate_Click_1" Content="Template()" />
+                          
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Grid that represents the cards that the user is holding-->
+            <Border BorderBrush="Black" BorderThickness="2" Grid.Row="1">
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="33*"/>
+                        <ColumnDefinition Width="33*"/>
+                        <ColumnDefinition Width="33*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="btn_card1" Height="150" Width="100">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image x:Name="img_card1" Source="Images/BackCard.jpg" Height="150" Width="100"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+
+                    <Button x:Name="btn_card2" Height="150" Width="100" Grid.Column="1" Click="btn_clickTest">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image x:Name="img_card2" Source="Images/BackCard.jpg" Height="150" Width="100" Grid.Column="1"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button x:Name="btn_card3" Height="150" Width="100" Grid.Column="2">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image x:Name="img_card3" Source="Images/BackCard.jpg" Height="150" Width="100" Grid.Column="2"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!--Grid that represents the options and user values-->
+            <Border BorderBrush="Black" BorderThickness="2" Grid.Row="1" Grid.Column="1">
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="50*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30*" />
+                        <RowDefinition Height="70*" />
+                    </Grid.RowDefinitions>
+
+                    <Label x:Name="lbl_userName" Content="Name: "/>
+                    <Label x:Name="lbl_userPoints" Content="Points: " Grid.Column="1" />
+
+                    <Button x:Name="btn_blindPile" Content="Select Blind" Height="40" Width="120" Grid.Row="1"/>
+                    <Button x:Name="btn_discardPile" Content="Select Discard" Height="40" Width="120" Grid.Row="1" Grid.Column="1"/>
+
+                    <Button x:Name="btn_keep" Content="Keep Card" Height="40" Width="120" Grid.Row="1" Visibility="Hidden"/>
+                    <Button x:Name="btn_discard" Content="Discard Card" Height="40" Width="120" Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>
+                </Grid>
+            </Border>
+
+
+
         </Grid>
-        
-        <!-- Grid that represents the cards that the user is holding-->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="33*"/>
-                <ColumnDefinition Width="33*"/>
-                <ColumnDefinition Width="33*"/>
-            </Grid.ColumnDefinitions>
-
-            <Button x:Name="btn_card1" Height="150" Width="100">
-                <Button.Template>
-                    <ControlTemplate>
-                        <Image x:Name="img_card1" Height="150" Width="100"/>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-
-
-            <Button x:Name="btn_card2" Height="150" Width="100" Grid.Column="1">
-                <Button.Template>
-                    <ControlTemplate>
-                        <Image x:Name="img_card2" Height="150" Width="100" Grid.Column="1"/>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-
-            <Button x:Name="btn_card3" Height="150" Width="100" Grid.Column="2">
-                <Button.Template>
-                    <ControlTemplate>
-                        <Image x:Name="img_card3" Height="150" Width="100" Grid.Column="2"/>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-        </Grid>
-        
-        <!--Grid that represents the options and user values-->
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="50*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30*" />
-                <RowDefinition Height="70*" />
-            </Grid.RowDefinitions>
-            
-            <Label x:Name="lbl_userName" Content="Name: "/>
-            <Label x:Name="lbl_userPoints" Content="Points: " Grid.Column="1" />
-            
-            <Button x:Name="btn_blindPile" Content="Select Blind" Height="40" Width="120" Grid.Row="1"/>
-            <Button x:Name="btn_discardPile" Content="Select Discard" Height="40" Width="120" Grid.Row="1" Grid.Column="1"/>
-
-            <Button x:Name="btn_keep" Content="Keep Card" Height="40" Width="120" Grid.Row="1" Visibility="Hidden"/>
-            <Button x:Name="btn_discard" Content="Discard Card" Height="40" Width="120" Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>
-        </Grid>
-        
-
-    </Grid>
+    </Border>
 </Window>

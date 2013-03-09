@@ -1,33 +1,33 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using System.Windows;
-//using System.Windows.Controls;
-//using System.Windows.Data;
-//using System.Windows.Documents;
-//using System.Windows.Input;
-//using System.Windows.Media;
-//using System.Windows.Media.Imaging;
-//using System.Windows.Navigation;
-//using System.Windows.Shapes;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-//using System.ServiceModel;
-//using GolfLibrary;
+using System.ServiceModel;
+using GolfLibrary;
 
-//namespace GolfClient
-//{
-//    /// <summary>
-//    /// Interaction logic for MainWindow.xaml
-//    /// </summary>
-//    public partial class MainWindow : Window
-//    {
+namespace GolfClient
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
 //        private IShoe shoe = null;
-
-//        public MainWindow()
-//        {
-//            InitializeComponent();
+        private int numPlayers = 0;
+        public MainWindow()
+        {
+            InitializeComponent();
 
 //            try
 //            {
@@ -52,7 +52,21 @@
 //            {
 //                MessageBox.Show(ex.Message);
 //            }
-//        }
+        }
+
+        protected void btn_clickTest(object sender, EventArgs e)
+        {
+            MessageBox.Show("Button Click Event()");
+        }
+
+        private void testTemplate_Click_1(object sender, RoutedEventArgs e)
+        {
+                numPlayers++;
+                PlayerTemplate pt = new PlayerTemplate("TestPlayer " + numPlayers, numPlayers * 7);
+                this.PlayerGrid.Children.Add(pt);
+            
+            
+        }
 
 //        private void updateCardCounts()
 //        {
@@ -125,5 +139,5 @@
 //        {
 
 //        }
-//    }
-//}
+    }
+}
