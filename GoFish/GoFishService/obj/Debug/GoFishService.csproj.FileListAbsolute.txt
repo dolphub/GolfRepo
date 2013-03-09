@@ -1,8 +1,0 @@
-C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishService\bin\Debug\GoFishService.exe.config
-C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishService\bin\Debug\GoFishService.exe
-C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishService\bin\Debug\GoFishService.pdb
-C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishService\bin\Debug\GoFishLibrary.dll
-C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishService\bin\Debug\GoFishLibrary.pdb
-C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishService\obj\Debug\GoFishService.csprojResolveAssemblyReference.cache
-C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishService\obj\Debug\GoFishService.exe
-C:\Users\Dolph\Documents\GitHub\GoFishRepo\GoFish\GoFishService\obj\Debug\GoFishService.pdb
