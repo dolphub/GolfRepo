@@ -13,3 +13,6 @@ C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfClient\bin\Debug\Gol
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfClient\bin\Debug\GolfLibrary.pdb
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfClient\obj\Debug\GolfClient.exe
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfClient\obj\Debug\GolfClient.pdb
+C:\Users\Acer\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfClient\bin\Debug\GolfClient.exe.config
+C:\Users\Acer\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfClient\obj\Debug\GolfClient.exe
+C:\Users\Acer\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfClient\obj\Debug\GolfClient.pdb
