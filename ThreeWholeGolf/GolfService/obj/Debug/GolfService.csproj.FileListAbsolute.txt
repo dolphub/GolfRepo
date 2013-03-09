@@ -1,0 +1,8 @@
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfService\bin\Debug\GolfService.exe.config
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfService\bin\Debug\GolfService.exe
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfService\bin\Debug\GolfService.pdb
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfService\obj\Debug\GolfService.csprojResolveAssemblyReference.cache
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfService\obj\Debug\GolfService.exe
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfService\obj\Debug\GolfService.pdb
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfService\bin\Debug\GolfLibrary.dll
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeWholeGolf\GolfService\bin\Debug\GolfLibrary.pdb
