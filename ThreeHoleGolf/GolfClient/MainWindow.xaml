@@ -23,9 +23,29 @@
                 <RowDefinition Height="50*"/>
             </Grid.RowDefinitions>
             
-            <Image x:Name="img_blindDeck" Height="150" Width="100"/>
-            <Image x:Name="img_discardDeck" Height="150" Width="100" Grid.Row="1"/>
-            <Image x:Name="img_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1" />
+            <Button x:Name="btn_blindDeck" Height="150" Width="100" >
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image x:Name="img_blindDeck" Height="150" Width="100"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button x:Name="btn_discardDeck" Height="150" Width="100" Grid.Row="1" >
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image x:Name="img_discardDeck" Height="150" Width="100"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button x:Name="btn_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image x:Name="img_drawnCard" Height="250" Width="175"  />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </Grid>
         
         <!-- Grid that represents the cards that the user is holding-->
@@ -36,9 +56,30 @@
                 <ColumnDefinition Width="33*"/>
             </Grid.ColumnDefinitions>
 
-            <Image x:Name="img_card1" Height="150" Width="100"/>
-            <Image x:Name="img_card2" Height="150" Width="100" Grid.Column="1"/>
-            <Image x:Name="img_card3" Height="150" Width="100" Grid.Column="2"/>
+            <Button x:Name="btn_card1" Height="150" Width="100">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image x:Name="img_card1" Height="150" Width="100"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+
+            <Button x:Name="btn_card2" Height="150" Width="100" Grid.Column="1">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image x:Name="img_card2" Height="150" Width="100" Grid.Column="1"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button x:Name="btn_card3" Height="150" Width="100" Grid.Column="2">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image x:Name="img_card3" Height="150" Width="100" Grid.Column="2"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </Grid>
         
         <!--Grid that represents the options and user values-->
