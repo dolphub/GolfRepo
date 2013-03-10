@@ -6,3 +6,4 @@ C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfLibrary\bin\Debug\Gol
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfLibrary\bin\Debug\GolfLibrary.pdb
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfLibrary\obj\Debug\GolfLibrary.dll
 C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfLibrary\obj\Debug\GolfLibrary.pdb
+C:\Users\Dolph\Documents\GitHub\GolfRepo\ThreeHoleGolf\GolfLibrary\obj\Debug\GolfLibrary.csprojResolveAssemblyReference.cache
