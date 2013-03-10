@@ -109,11 +109,61 @@
       <Name>GolfLibrary</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Resource Include="Images\BackCard.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\7ofClubs.png" />
+    <Resource Include="Images\Cards\AceClubs.jpg" />
+    <Resource Include="Images\Cards\AceDiamonds.jpg" />
+    <Resource Include="Images\Cards\AceHearts.jpg" />
+    <Resource Include="Images\Cards\AceSpades.jpg" />
+    <Resource Include="Images\Cards\BackCard.jpg" />
+    <Resource Include="Images\Cards\EightClubs.jpg" />
+    <Resource Include="Images\Cards\EightDiamonds.jpg" />
+    <Resource Include="Images\Cards\EightHearts.jpg" />
+    <Resource Include="Images\Cards\EightSpades.jpg" />
+    <Resource Include="Images\Cards\FiveClubs.jpg" />
+    <Resource Include="Images\Cards\FiveDiamonds.jpg" />
+    <Resource Include="Images\Cards\FiveHearts.jpg" />
+    <Resource Include="Images\Cards\FiveSpades.jpg" />
+    <Resource Include="Images\Cards\FourClubs.jpg" />
+    <Resource Include="Images\Cards\FourDiamonds.jpg" />
+    <Resource Include="Images\Cards\FourHearts.jpg" />
+    <Resource Include="Images\Cards\FourSpades.jpg" />
+    <Resource Include="Images\Cards\JackClubs.jpg" />
+    <Resource Include="Images\Cards\JackDiamonds.jpg" />
+    <Resource Include="Images\Cards\JackHearts.jpg" />
+    <Resource Include="Images\Cards\JackSpades.jpg" />
+    <Resource Include="Images\Cards\KingClubs.jpg" />
+    <Resource Include="Images\Cards\KingDiamonds.jpg" />
+    <Resource Include="Images\Cards\KingHearts.jpg" />
+    <Resource Include="Images\Cards\KingSpades.jpg" />
+    <Resource Include="Images\Cards\NineClubs.jpg" />
+    <Resource Include="Images\Cards\NineDiamonds.jpg" />
+    <Resource Include="Images\Cards\NineHearts.jpg" />
+    <Resource Include="Images\Cards\NineSpades.jpg" />
+    <Resource Include="Images\Cards\QueenClubs.jpg" />
+    <Resource Include="Images\Cards\QueenDiamonds.jpg" />
+    <Resource Include="Images\Cards\QueenHearts.jpg" />
+    <Resource Include="Images\Cards\QueenSpades.jpg" />
+    <Resource Include="Images\Cards\SevenClubs.jpg" />
+    <Resource Include="Images\Cards\SevenDiamonds.jpg" />
+    <Resource Include="Images\Cards\SevenHearts.jpg" />
+    <Resource Include="Images\Cards\SevenSpades.jpg" />
+    <Resource Include="Images\Cards\SixClubs.jpg" />
+    <Resource Include="Images\Cards\SixDiamonds.jpg" />
+    <Resource Include="Images\Cards\SixHearts.jpg" />
+    <Resource Include="Images\Cards\SixSpades.jpg" />
+    <Resource Include="Images\Cards\TenClubs.jpg" />
+    <Resource Include="Images\Cards\TenDiamonds.jpg" />
+    <Resource Include="Images\Cards\TenHearts.jpg" />
+    <Resource Include="Images\Cards\TenSpades.jpg" />
+    <Resource Include="Images\Cards\ThreeClubs.jpg" />
+    <Resource Include="Images\Cards\ThreeDiamonds.jpg" />
+    <Resource Include="Images\Cards\ThreeHearts.jpg" />
+    <Resource Include="Images\Cards\ThreeSpades.jpg" />
+    <Resource Include="Images\Cards\TwoClubs.jpg" />
+    <Resource Include="Images\Cards\TwoDiamonds.jpg" />
+    <Resource Include="Images\Cards\TwoHearts.jpg" />
+    <Resource Include="Images\Cards\TwoSpades.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

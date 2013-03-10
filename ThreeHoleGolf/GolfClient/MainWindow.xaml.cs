@@ -58,25 +58,68 @@ namespace GolfClient
 
         protected void btn_clickTest(object sender, EventArgs e)
         {
-            MessageBox.Show("Button Click Event()");
+            SwapImage(false, btn_card1, "1", @"\Images\Cards\SevenDiamonds.jpg");
+
+            SwapContestantImage("TestPlayer_1", "3", @"\Images\Cards\JackHearts.jpg");
         }
 
         private void testTemplate_Click_1(object sender, RoutedEventArgs e)
         {
             numPlayers++;
-            PlayerTemplate pt = new PlayerTemplate("TestPlayer " + numPlayers, numPlayers * 7);
+            string PlayerID = "TestPlayer_" + numPlayers;
+            PlayerTemplate pt = new PlayerTemplate(PlayerID, numPlayers * 7);
             this.PlayerGrid.Children.Add(pt);
-
-
-            //(btn_card2.FindName("img_card2") as Image).Source = new BitmapImage(new Uri(@"Images\7ofClubs.png"));
-            
-            
-            
-
-            
-            
-            //var card1Img = btn_card1.Template.FindName("img_card1", ControlTemplate);
+            SwapImage(true, btn_card1, "1", @"\Images\Cards\SevenDiamonds.jpg");
         }
+
+        // Swapping and Showing Cards
+        public void SwapImage(bool _showface, FrameworkElement btn, string _identity, string newcard)
+        {
+            (btn.FindName("face" + _identity) as Image).Source = new BitmapImage(new Uri(newcard, UriKind.RelativeOrAbsolute));
+            if (_showface) // Showing Face Card
+            {
+                (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
+                (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
+            }
+            else // Showing Back Card
+            {
+                (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
+                (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
+            }
+
+        }
+
+        public void SwapContestantImage( string _playerID, string _identifier, string newcard)
+        {
+            try
+            {
+                foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
+                {
+                    if (pt.Name == _playerID)
+                    {
+                        
+                        (pt.FindName("face" + _identifier) as Image).Source = new BitmapImage(new Uri(newcard, UriKind.RelativeOrAbsolute));
+                        (pt.FindName("back" + _identifier) as Image).Visibility = System.Windows.Visibility.Hidden;
+                        (pt.FindName("face" + _identifier) as Image).Visibility = System.Windows.Visibility.Visible;
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error swapping player " + _playerID + "'s card\n" + ex.InnerException.ToString());
+            }
+        }
+
+        
+
+
+
+
+
+
+        //var card1Img = btn_card1.Template.FindName("img_card1", ControlTemplate);
+
 
         //        private void updateCardCounts()
         //        {

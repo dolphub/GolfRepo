@@ -29,14 +29,14 @@
                     <Button x:Name="btn_blindDeck2" Height="150" Width="100" >
                         <Button.Template>
                             <ControlTemplate>
-                                <Image x:Name="img_blindDeck" Source="Images/BackCard.jpg" Height="150" Width="100"/>
+                                <Image x:Name="img_blindDeck" Source="Images/Cards/BackCard.jpg" Height="150" Width="100"/>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
                     <Button x:Name="btn_blindDeck" Height="150" Width="100" Margin="43,62,19,62" >
                         <Button.Template>
                             <ControlTemplate>
-                                <Image x:Name="img_blindDeck" Source="Images/BackCard.jpg" Height="150" Width="100"/>
+                                <Image x:Name="img_blindDeck" Source="Images/Cards/BackCard.jpg" Height="150" Width="100"/>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
@@ -45,7 +45,7 @@
                     <Button x:Name="btn_discardDeck" Height="150" Width="100" Grid.Row="1" >
                         <Button.Template>
                             <ControlTemplate>
-                                <Image x:Name="img_discardDeck" Source="Images/BackCard.jpg" Height="150" Width="100"/>
+                                <Image x:Name="img_discardDeck" Source="Images/Cards/BackCard.jpg" Height="150" Width="100"/>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
@@ -53,7 +53,7 @@
                     <Button x:Name="btn_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1">
                         <Button.Template>
                             <ControlTemplate>
-                                <Image x:Name="img_drawnCard" Source="Images/BackCard.jpg" Height="250" Width="175"  />
+                                <Image x:Name="img_drawnCard" Source="Images/Cards/BackCard.jpg" Height="250" Width="175"  />
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
@@ -81,31 +81,29 @@
                         <ColumnDefinition Width="33*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="btn_card1" Height="150" Width="100">
-                        <Button.Template>
-                            <ControlTemplate x:Name="btn1card">
-                                <Image x:Name="img_card1" Source="Images/BackCard.jpg" Height="150" Width="100"/>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <!--Templated Button Version 2.0-->
+                    <!--Player Card 1-->
+                    <Button x:Name="btn_card1"  Height="150" Width="100" Grid.Column="0" Click="btn_clickTest" >
+                        <Grid Width="100" Margin="-5">
+                            <Image x:Name="back1" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
+                            <Image x:Name="face1" Stretch="Fill" Visibility="Hidden" />
+                        </Grid>
                     </Button>
 
-                    <Button x:Name="btn_card2" Height="150" Width="100" Grid.Column="1" Click="btn_clickTest" >
-                        <Image x:Name="img_card2" Source="Images/BackCard.jpg" Stretch="Fill"/>
+                    <!--Player Card 2-->
+                    <Button x:Name="btn_card2"  Height="150" Width="100" Grid.Column="1" Click="btn_clickTest" >
+                        <Grid Width="100" Margin="-5">
+                            <Image x:Name="back2" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
+                            <Image x:Name="face2" Stretch="Fill" Visibility="Hidden" />
+                        </Grid>
                     </Button>
-                    <!--<Button x:Name="btn_card2" Height="150" Width="100" Grid.Column="1" Click="btn_clickTest">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Image x:Name="img_card2" Source="Images/BackCard.jpg" Height="150" Width="100" Grid.Column="1"/>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>-->
-
-                    <Button x:Name="btn_card3" Height="150" Width="100" Grid.Column="2">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Image x:Name="img_card3" Source="Images/BackCard.jpg" Height="150" Width="100" Grid.Column="2"/>
-                            </ControlTemplate>
-                        </Button.Template>
+                    
+                    <!--Player Card 3-->
+                    <Button x:Name="btn_card3"  Height="150" Width="100" Grid.Column="2" Click="btn_clickTest" >
+                        <Grid Width="100" Margin="-5">
+                            <Image x:Name="back3" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
+                            <Image x:Name="face3" Stretch="Fill" Visibility="Hidden" />
+                        </Grid>
                     </Button>
                 </Grid>
             </Border>

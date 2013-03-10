@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d"  >
+             mc:Ignorable="d" Name="Player_" >
     <Border x:Name="PlayerBorder" BorderBrush="Black" BorderThickness="5" >
         <Grid>
 
@@ -41,29 +41,26 @@
                         <ColumnDefinition Width="33*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="btn_card1" Margin="15">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Image x:Name="img_card1" Source="Images/BackCard.jpg"/>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <Button x:Name="btn_card1" Grid.Column="0" >
+                        <Grid >
+                            <Image x:Name="back1" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
+                            <Image x:Name="face1" Stretch="Fill" Visibility="Hidden" />
+                        </Grid>
                     </Button>
 
 
-                    <Button x:Name="btn_card2" Grid.Column="1" Margin="15">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Image x:Name="img_card2" Source="Images/BackCard.jpg" Grid.Column="1"/>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <Button x:Name="btn_card2"  Grid.Column="1" >
+                        <Grid >
+                            <Image x:Name="back2" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
+                            <Image x:Name="face2" Stretch="Fill" Visibility="Hidden" />
+                        </Grid>
                     </Button>
 
-                    <Button x:Name="btn_card3"  Grid.Column="2" Margin="15">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Image x:Name="img_card3" Source="Images/BackCard.jpg" Grid.Column="2"/>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <Button x:Name="btn_card3"  Grid.Column="2"  >
+                        <Grid >
+                            <Image x:Name="back3" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
+                            <Image x:Name="face3" Stretch="Fill" Visibility="Hidden" />
+                        </Grid>
                     </Button>
                 </Grid>
             </Border>
