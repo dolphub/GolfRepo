@@ -32,8 +32,6 @@ namespace GolfLibrary
         {
             cardIdx = 0;
             repopulate();
-            Console.WriteLine("Creating a shoe");
-
         }
 
         public Shoe(int numOfDecks)
@@ -43,17 +41,7 @@ namespace GolfLibrary
             repopulate();
         }
 
-
-
-
         // public methods and properties
-
-        // this is not available through the interface
-        public string DoAwesomeStuff()
-        {
-            return "Yeah!";
-        }
-
         // returns the next card
         public string Draw()
         {
@@ -67,7 +55,6 @@ namespace GolfLibrary
         // reorder the cards in the shoe
         public void Shuffle()
         {
-            Console.WriteLine("Shuffling the shoe.");
             randomizeCards();
         }
 
@@ -92,9 +79,6 @@ namespace GolfLibrary
             }
         }
 
-
-
-
         // helper methods
         private void repopulate()
         {
@@ -108,13 +92,20 @@ namespace GolfLibrary
                 // for each suit in this deck
                 foreach (Card.SuitID s in Enum.GetValues(typeof(Card.SuitID)))
                 {
-                    // foreach rank in this suit
-                    foreach (Card.RankID r in Enum.GetValues(typeof(Card.RankID)))
+                    if (!(s == Card.SuitID.Red || s == Card.SuitID.Black))
                     {
-                        // add card
-                        cards.Add(new Card(s, r));
+                        // foreach rank in this suit
+                        foreach (Card.RankID r in Enum.GetValues(typeof(Card.RankID)))
+                        {
+                            if ( !( r == Card.RankID.Joker ))
+                            // add card
+                            cards.Add(new Card(s, r));
+                        }
                     }
                 }
+
+                cards.Add(new Card(Card.SuitID.Red, Card.RankID.Joker));
+                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker));
             }
             // shuffle cards
             randomizeCards();

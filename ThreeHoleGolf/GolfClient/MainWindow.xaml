@@ -26,7 +26,7 @@
                         <RowDefinition Height="50*"/>
                     </Grid.RowDefinitions>
 
-                    <Button x:Name="btn_blindDeck" Height="150" Width="100" >
+                    <Button x:Name="btn_blindDeck" Height="150" Width="100" Click="btn_blindDeck_Click" >
                         <Button.Template>
                             <ControlTemplate>
                                 <Image x:Name="img_blindDeck" Source="Images/BackCard.jpg" Height="150" Width="100"/>
@@ -42,7 +42,7 @@
                         </Button.Template>
                     </Button>
 
-                    <Button x:Name="btn_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1">
+                    <Button x:Name="btn_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1" Visibility="Collapsed">
                         <Button.Template>
                             <ControlTemplate>
                                 <Image x:Name="img_drawnCard" Source="Images/BackCard.jpg" Height="250" Width="175"  />

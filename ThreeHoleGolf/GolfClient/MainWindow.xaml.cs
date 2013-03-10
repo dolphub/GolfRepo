@@ -23,49 +23,60 @@ namespace GolfClient
     /// </summary>
     public partial class MainWindow : Window
     {
-//        private IShoe shoe = null;
+        private IShoe shoe = null;
+
         private int numPlayers = 0;
         public MainWindow()
         {
             InitializeComponent();
 
-//            try
-//            {
+            try
+            {
 
-//                // configure the ABCs of using the cardsLibrary as a service
-//                ChannelFactory<IShoe> channel = new ChannelFactory<IShoe>(
-//                 new NetTcpBinding(),
-//                 new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
+                // configure the ABCs of using the cardsLibrary as a service
+                ChannelFactory<IShoe> channel = new ChannelFactory<IShoe>(
+                 new NetTcpBinding(),
+                 new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
 
-//                shoe = channel.CreateChannel();
-
-//                // set upslider control(# of decks)
-//                sliderDecks.Minimum = 1;
-//                sliderDecks.Maximum = 10;
-//                sliderDecks.Value = shoe.NumDecks;
-
-//                // initialize the card counts
-//                updateCardCounts();
-
-//            }
-//            catch (Exception ex)
-//            {
-//                MessageBox.Show(ex.Message);
-//            }
+                //Activate the shoe
+                shoe = channel.CreateChannel();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         protected void btn_clickTest(object sender, EventArgs e)
         {
-            MessageBox.Show("Button Click Event()");
+            string card = shoe.Draw();
+            int deck_size = shoe.NumCards;
+            MessageBox.Show(card);
+            MessageBox.Show(""+deck_size);
         }
 
         private void testTemplate_Click_1(object sender, RoutedEventArgs e)
         {
-                numPlayers++;
-                PlayerTemplate pt = new PlayerTemplate("TestPlayer " + numPlayers, numPlayers * 7);
-                this.PlayerGrid.Children.Add(pt);
-            
-            
+            numPlayers++;
+            PlayerTemplate pt = new PlayerTemplate("TestPlayer " + numPlayers, numPlayers * 7);
+            this.PlayerGrid.Children.Add(pt);
+        }
+
+        //Draw a card from the deck
+        private void btn_blindDeck_Click(object sender, RoutedEventArgs e)
+        {
+            //Draw Card
+            shoe.Draw();
+
+            //Show the card drawn in the center
+            btn_drawnCard.Visibility = Visibility.Visible;
+
+            //Change the player turns buttons to discard or keep
+            btn_discard.Visibility = Visibility.Visible;
+            btn_keep.Visibility = Visibility.Visible;
+
+            btn_blindPile.Visibility = Visibility.Collapsed;
+            btn_discardPile.Visibility = Visibility.Collapsed;
         }
 
 //        private void updateCardCounts()

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace GolfLibrary
 {
+    //Need to also add Jokers
     public interface ICard
     {
         Card.SuitID Suit { get; }
         Card.RankID Rank { get; }
         string Name { get; }
+        Uri Card_uri { set; }
     }
 
     public class Card : ICard
@@ -18,14 +20,14 @@ namespace GolfLibrary
         // enum of possible values for the card's suit
         public enum SuitID
         {
-            Clubs, Diamonds, Hearts, Spades
+            Clubs, Diamonds, Hearts, Spades, Red, Black
         };
 
         // enum of possible values for the card's rank
         public enum RankID
         {
             Ace, King, Queen, Jack, Ten, Nine, Eight, Seven, Six,
-            Five, Four, Three, Two
+            Five, Four, Three, Two, Joker
         };
 
         // member variables and accessor methods
@@ -45,7 +47,13 @@ namespace GolfLibrary
             Rank = r;
         }
 
+        private Uri _card_uri;
 
+        public Uri Card_uri
+        {
+            get { return _card_uri; }
+            set { _card_uri = value; }
+        }
     }
 }
 
