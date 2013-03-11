@@ -4,6 +4,7 @@ ThreeHoleGolf/GolfService/bin/
 ThreeHoleGolf/GolfClient/obj/
 ThreeHoleGolf/GolfLibrary/obj/
 ThreeHoleGolf/GolfService/obj/
+ThreeHoleGolf/*.v11.suo
 *.cache
 *.suo
 *.v11.suo
