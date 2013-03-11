@@ -5,3 +5,5 @@ ThreeHoleGolf/GolfClient/obj/
 ThreeHoleGolf/GolfLibrary/obj/
 ThreeHoleGolf/GolfService/obj/
 *.cache
+*.suo
+*.v11.suo
