@@ -12,6 +12,7 @@ namespace GolfLibrary
         Card.SuitID Suit { get; }
         Card.RankID Rank { get; }
         string Name { get; }
+        string sName { get; }
         Uri Card_uri { set; }
     }
 
@@ -40,6 +41,15 @@ namespace GolfLibrary
                 return Rank.ToString() + " of " + Suit.ToString();
             }
         }
+
+        public string sName
+        {
+            get
+            {
+                return Rank.ToString() + Suit.ToString();
+            }
+        }
+
         // c'tor which identifies which card this is
         public Card(SuitID s, RankID r)
         {

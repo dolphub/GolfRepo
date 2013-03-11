@@ -45,11 +45,25 @@ namespace GolfLibrary
         // returns the next card
         public string Draw()
         {
-            if (cardIdx == cards.Count)
-                throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.");
-
-            Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
-            return cards[cardIdx++].Name;
+            try
+            {
+                if (cardIdx == cards.Count())
+                {
+                    throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
+                    
+                }
+                else
+                {
+                    Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
+                    return cards[cardIdx++].sName;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message.ToString());
+                return cards[cardIdx - 1].sName;
+            }
+            
         }
 
         // reorder the cards in the shoe
@@ -104,7 +118,7 @@ namespace GolfLibrary
                     }
                 }
 
-                cards.Add(new Card(Card.SuitID.Red, Card.RankID.Joker));
+                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker));
                 cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker));
             }
             // shuffle cards
