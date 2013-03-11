@@ -54,6 +54,7 @@ namespace GolfClient
             //            {
             //                MessageBox.Show(ex.Message);
             //            }
+
         }
 
         protected void btn_clickTest(object sender, EventArgs e)
