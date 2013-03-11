@@ -1,5 +1,6 @@
-*.exe
-*.pdb
-*.dll
-*.g.cs
-*.csproj
+ThreeHoleGolf/GolfClient/bin/
+ThreeHoleGolf/GolfLibrary/bin/
+ThreeHoleGolf/GolfService/bin/
+ThreeHoleGolf/GolfClient/obj/
+ThreeHoleGolf/GolfLibrary/obj/
+ThreeHoleGolf/GolfService/obj/
