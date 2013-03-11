@@ -25,7 +25,7 @@ namespace GolfClient
     {
 
         private IShoe shoe = null;
-
+        private string CurrentCard = null;
 
         private int numPlayers = 0;
         public MainWindow()
@@ -33,7 +33,7 @@ namespace GolfClient
             InitializeComponent();
             try
             {
-
+                btn_discardDeck.Visibility = System.Windows.Visibility.Collapsed;
                 // configure the ABCs of using the cardsLibrary as a service
                 ChannelFactory<IShoe> channel = new ChannelFactory<IShoe>(
                  new NetTcpBinding(),
@@ -115,25 +115,46 @@ namespace GolfClient
         private void btn_blindDeck_Click(object sender, RoutedEventArgs e)
         {
             //Draw Card
-            string card = shoe.Draw();
+            CurrentCard = shoe.Draw();
 
             //Show the card drawn in the center
             btn_drawnCard.Visibility = Visibility.Visible;
+            (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + CurrentCard + ".jpg", UriKind.RelativeOrAbsolute));
+            this.btn_blindDeck.IsEnabled = false;
 
-            //if (card == "JokerBlack")
-            //{
-            //    Console.WriteLine("Found the jokerblack");
-            //    Image i = new Image();
-            //    i.Source = new BitmapImage(new Uri(@"\Images\Cards\" + card + ".jpg", UriKind.RelativeOrAbsolute));
-            //}
+            //Enable Options
+            btn_discardOption.IsEnabled = true;
+            btn_discardOption.Visibility = System.Windows.Visibility.Visible;
+            btn_KeepOption.IsEnabled = true;
+            btn_KeepOption.Visibility = System.Windows.Visibility.Visible;
+
             
-
-
-            (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card + ".jpg", UriKind.RelativeOrAbsolute));
 
             // Collapsing buttons doesn't work 
             // Hiding buttons doens't work,
             // we may have unregister the event itself and register it again after they discard/keep the drawn card
+        }
+
+        private void btn_Discard_Click_1(object sender, RoutedEventArgs e)
+        {
+            this.btn_drawnCard.Visibility = System.Windows.Visibility.Collapsed;
+            btn_discardDeck.Visibility = System.Windows.Visibility.Visible;
+            // Set Discarded Cardpile to the most recent card
+            Image i = new Image();
+            i.Source = new BitmapImage(new Uri(@"\Images\Cards\" + CurrentCard + ".jpg", UriKind.RelativeOrAbsolute));
+            (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + CurrentCard + ".jpg", UriKind.RelativeOrAbsolute));
+            btn_blindDeck.IsEnabled = true;
+
+            btn_discardOption.IsEnabled = false;
+            btn_discardOption.Visibility = System.Windows.Visibility.Hidden;
+            btn_KeepOption.IsEnabled = false;
+            btn_KeepOption.Visibility = System.Windows.Visibility.Hidden;
+
+        }
+
+        private void btn_Keep_Click_1(object sender, RoutedEventArgs e)
+        {
+
         }
 
         
