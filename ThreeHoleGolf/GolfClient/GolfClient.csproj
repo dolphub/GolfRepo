@@ -110,9 +110,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Cards\JokerBlack.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Cards\AceClubs.jpg" />
     <Resource Include="Images\Cards\AceDiamonds.jpg" />
     <Resource Include="Images\Cards\AceHearts.jpg" />
@@ -166,6 +163,9 @@
     <Resource Include="Images\Cards\TwoDiamonds.jpg" />
     <Resource Include="Images\Cards\TwoHearts.jpg" />
     <Resource Include="Images\Cards\TwoSpades.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Cards\JokerBlack.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

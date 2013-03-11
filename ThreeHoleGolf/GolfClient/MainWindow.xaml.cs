@@ -117,10 +117,18 @@ namespace GolfClient
             //Draw Card
             string card = shoe.Draw();
 
-
-
             //Show the card drawn in the center
             btn_drawnCard.Visibility = Visibility.Visible;
+
+            //if (card == "JokerBlack")
+            //{
+            //    Console.WriteLine("Found the jokerblack");
+            //    Image i = new Image();
+            //    i.Source = new BitmapImage(new Uri(@"\Images\Cards\" + card + ".jpg", UriKind.RelativeOrAbsolute));
+            //}
+            
+
+
             (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card + ".jpg", UriKind.RelativeOrAbsolute));
 
             // Collapsing buttons doesn't work 
