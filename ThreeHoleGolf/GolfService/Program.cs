@@ -13,10 +13,11 @@ namespace GolfService
     {
         static void Main(string[] args)
         {
+            ServiceHost servHost = null;
             try
             {
                 // Address
-                ServiceHost servHost = new ServiceHost(typeof(Shoe),
+                servHost = new ServiceHost(typeof(Shoe),
                     new Uri("net.tcp://locahost:9000/GolfLibrary/")); // this is the assembly
 
                 // Service contract and binding
@@ -28,15 +29,17 @@ namespace GolfService
 
                 // Keep the server running until <Enter> is pressed
                 Console.WriteLine("Shoe service is activated. Press <Enter> to quit.");
-                Console.ReadKey();
-
-                // Shut down the service
-                servHost.Close();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                // Shut down the service
                 Console.ReadKey();
+                if (servHost != null)
+                    servHost.Close();
             }
         }
     }

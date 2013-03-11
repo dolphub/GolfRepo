@@ -23,12 +23,18 @@ namespace GolfClient
     /// </summary>
     public partial class MainWindow : Window
     {
+<<<<<<< HEAD
         //        private IShoe shoe = null;
+=======
+        private IShoe shoe = null;
+
+>>>>>>> tjbranch
         private int numPlayers = 0;
         public MainWindow()
         {
             InitializeComponent();
 
+<<<<<<< HEAD
 
 
             //            try
@@ -55,18 +61,43 @@ namespace GolfClient
             //                MessageBox.Show(ex.Message);
             //            }
 
+=======
+            try
+            {
+
+                // configure the ABCs of using the cardsLibrary as a service
+                ChannelFactory<IShoe> channel = new ChannelFactory<IShoe>(
+                 new NetTcpBinding(),
+                 new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
+
+                //Activate the shoe
+                shoe = channel.CreateChannel();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+>>>>>>> tjbranch
         }
 
         protected void btn_clickTest(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             SwapImage(false, btn_card1, "1", @"\Images\Cards\SevenDiamonds.jpg");
 
             SwapContestantImage("TestPlayer_1", "3", @"\Images\Cards\JackHearts.jpg");
+=======
+            string card = shoe.Draw();
+            int deck_size = shoe.NumCards;
+            MessageBox.Show(card);
+            MessageBox.Show(""+deck_size);
+>>>>>>> tjbranch
         }
 
         private void testTemplate_Click_1(object sender, RoutedEventArgs e)
         {
             numPlayers++;
+<<<<<<< HEAD
             string PlayerID = "TestPlayer_" + numPlayers;
             PlayerTemplate pt = new PlayerTemplate(PlayerID, numPlayers * 7);
             this.PlayerGrid.Children.Add(pt);
@@ -110,6 +141,27 @@ namespace GolfClient
             {
                 MessageBox.Show("Error swapping player " + _playerID + "'s card\n" + ex.InnerException.ToString());
             }
+=======
+            PlayerTemplate pt = new PlayerTemplate("TestPlayer " + numPlayers, numPlayers * 7);
+            this.PlayerGrid.Children.Add(pt);
+        }
+
+        //Draw a card from the deck
+        private void btn_blindDeck_Click(object sender, RoutedEventArgs e)
+        {
+            //Draw Card
+            shoe.Draw();
+
+            //Show the card drawn in the center
+            btn_drawnCard.Visibility = Visibility.Visible;
+
+            //Change the player turns buttons to discard or keep
+            btn_discard.Visibility = Visibility.Visible;
+            btn_keep.Visibility = Visibility.Visible;
+
+            btn_blindPile.Visibility = Visibility.Collapsed;
+            btn_discardPile.Visibility = Visibility.Collapsed;
+>>>>>>> tjbranch
         }
 
         
