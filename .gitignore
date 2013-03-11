@@ -4,3 +4,4 @@ ThreeHoleGolf/GolfService/bin/
 ThreeHoleGolf/GolfClient/obj/
 ThreeHoleGolf/GolfLibrary/obj/
 ThreeHoleGolf/GolfService/obj/
+*.cache
