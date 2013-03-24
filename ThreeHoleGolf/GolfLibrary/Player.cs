@@ -13,13 +13,13 @@ namespace GolfLibrary
     {
         string Name { [OperationContract] get; [OperationContract] set; }
         int Points { [OperationContract] get; [OperationContract] set; }
-        List<Card> Player_cards { [OperationContract] get; [OperationContract] set; }
+        List<string> Player_cards { [OperationContract] get; [OperationContract] set; }
     }
 
     class Player
     {
         public string Name { get; set; }
         public int Points { get; set; }
-        public List<Card> Player_cards { get; set; }
+        public List<string> Player_cards { get; set; }
     }
 }
