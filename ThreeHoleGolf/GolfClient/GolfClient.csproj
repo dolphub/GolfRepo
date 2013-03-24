@@ -110,6 +110,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\HelpIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\Cards\AceClubs.jpg" />
     <Resource Include="Images\Cards\AceDiamonds.jpg" />
     <Resource Include="Images\Cards\AceHearts.jpg" />

@@ -22,6 +22,8 @@ namespace GolfLibrary
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class Shoe : IShoe
     {
+       
+
         // member variables
         private List<Card> cards = new List<Card>();
         private int numDecks = 1;

@@ -40,19 +40,23 @@
                     </Button>
 
 
-                    <Button x:Name="btn_discardDeck" Height="150" Width="100" Grid.Row="1" >
+                    <Button x:Name="btn_discardDeck" Height="150" Width="100" Visibility="Visible" Grid.Row="1" Drop="btn_discardDeck_Drop" PreviewMouseLeftButtonDown="btn_PreviewMouseLeftButtonDown" AllowDrop="True">
                         <Grid Width="100" Margin="-5">
-                            <!--<Image x:Name="img_discardDeck" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>-->
-                            <Image x:Name="facediscardDeck" Stretch="Fill" Visibility="Visible" />
+                            <Image x:Name="img_discardDeck" Source="Images/Cards/BackCard.jpg" Stretch="Fill" />
+                            <Image x:Name="facediscardDeck" Stretch="Fill" Visibility="Hidden" />
                         </Grid>
                     </Button>
 
+<!--<<<<<<< HEAD
                     <Button x:Name="btn_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1" Visibility="Visible" Margin="102,126,100,173">
+=======-->
+                    <Button x:Name="btn_drawnCard" Height="250" Width="175" Grid.RowSpan="2" Grid.Column="1" Visibility="Hidden" PreviewMouseLeftButtonDown="btn_PreviewMouseLeftButtonDown">
+<!-->>>>>>> tjbranch-->
                         <Image x:Name="facedrawnCard" Stretch="Fill"  />
                     </Button>
 
-                    <Button x:Name="btn_discardOption" Visibility="Visible" Content="Discard" IsEnabled="False" Height="40" Width="150" Click="btn_Discard_Click_1" Grid.Column="1" Margin="203,193,24,42" Grid.Row="1" />
-                    <Button x:Name="btn_KeepOption" Visibility="Visible" Content="Keep" IsEnabled="False" Height="40" Width="150" Grid.Column="1" Click="btn_Keep_Click_1" Margin="28,193,199,42" Grid.Row="1"/>
+                    <!--<Button x:Name="btn_discardOption" Visibility="Visible" Content="Discard" IsEnabled="False" Height="40" Width="150" Click="btn_Discard_Click_1" Grid.Column="1" Margin="203,193,24,42" Grid.Row="1" />
+                    <Button x:Name="btn_KeepOption" Visibility="Visible" Content="Keep" IsEnabled="False" Height="40" Width="150" Grid.Column="1" Click="btn_Keep_Click_1" Margin="28,193,199,42" Grid.Row="1"/>-->
 
                 </Grid>
             </Border>
@@ -79,7 +83,7 @@
 
                     <!--Templated Button Version 2.0-->
                     <!--Player Card 1-->
-                    <Button x:Name="btn_card1"  Height="150" Width="100" Grid.Column="0" >
+                    <Button x:Name="btn_card1"  Height="150" Width="100" Grid.Column="0" Drop="btn_discardDeck_DropBottomCards" AllowDrop="True" >
                         <Grid Width="100" Margin="-5">
                             <Image x:Name="back1" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face1" Stretch="Fill" Visibility="Hidden" />
@@ -87,7 +91,7 @@
                     </Button>
 
                     <!--Player Card 2-->
-                    <Button x:Name="btn_card2"  Height="150" Width="100" Grid.Column="1" >
+                    <Button x:Name="btn_card2"  Height="150" Width="100" Grid.Column="1" Drop="btn_discardDeck_DropBottomCards" AllowDrop="True" >
                         <Grid Width="100" Margin="-5">
                             <Image x:Name="back2" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face2" Stretch="Fill" Visibility="Hidden" />
@@ -95,7 +99,7 @@
                     </Button>
 
                     <!--Player Card 3-->
-                    <Button x:Name="btn_card3"  Height="150" Width="100" Grid.Column="2" Click="btn_clickTest" >
+                    <Button x:Name="btn_card3"  Height="150" Width="100" Grid.Column="2" Click="btn_clickTest" AllowDrop="True" Drop="btn_discardDeck_DropBottomCards" >
                         <Grid Width="100" Margin="-5">
                             <Image x:Name="back3" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face3" Stretch="Fill" Visibility="Hidden" />
@@ -119,6 +123,18 @@
                     <Label x:Name="lbl_userName" Content="Name: "/>
                     <Label x:Name="lbl_userPoints" Content="Points: " Grid.Column="1" />
                     
+<!--<<<<<<< HEAD
+=======-->
+                    <Button x:Name="btn_help" Click="btn_help_Click" Height="40" Width="40" Grid.Row="1" Grid.Column="1">
+                        <Image x:Name="helpIcon" Source="Images/HelpIcon.png" Stretch="Fill"/>
+                    </Button>
+
+                    <!--<Button x:Name="btn_blindPile" Content="Select Blind" Height="40" Width="120" Grid.Row="1"/>
+                    <Button x:Name="btn_discardPile" Content="Select Discard" Height="40" Width="120" Grid.Row="1" Grid.Column="1"/>
+
+                    <Button x:Name="btn_keep" Content="Keep Card" Height="40" Width="120" Grid.Row="1" Visibility="Hidden"/>
+                    <Button x:Name="btn_discard" Content="Discard Card" Height="40" Width="120" Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>-->
+<!-->>>>>>> tjbranch-->
                 </Grid>
             </Border>
 
