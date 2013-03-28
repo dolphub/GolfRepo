@@ -8,40 +8,110 @@ using System.ServiceModel;
 
 namespace GolfLibrary
 {
-    [ServiceContract]
-    public interface IShoe
+
+
+
+    public interface IGameCallBack
+    {
+        [OperationContract(IsOneWay = true)]
+        void UpdateDrawn(string _drawn);
+        //void UpdateDiscard(string _discard);
+    }
+
+    [ServiceContract(CallbackContract = typeof(IGameCallBack))]
+    public interface IGameSystem
     {
         [OperationContract]
         string Draw();
+
         [OperationContract]
+        List<string> DrawThreeCards();
+
+        [OperationContract(IsOneWay = true)]
         void Shuffle();
+
+        [OperationContract]
+        bool Join(string name);
+
+        [OperationContract(IsOneWay = true)]
+        void Leave(string name);
+
         int NumCards { [OperationContract] get; }
         int NumDecks { [OperationContract] get; [OperationContract] set; }
+        string DiscardedCard { [OperationContract]get; [OperationContract]set; }
+
     }
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class Shoe : IShoe
+    public class GameSystem : IGameSystem
     {
-       
+
+
 
         // member variables
         private List<Card> cards = new List<Card>();
+        private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;
         private int cardIdx;
+        private string _drawnCard, _discardCard;
+
 
         // C'tors
-        public Shoe()
+        public GameSystem()
         {
             cardIdx = 0;
             repopulate();
         }
 
-        public Shoe(int numOfDecks)
+        public GameSystem(int numOfDecks)
         {
             cardIdx = 0;
             numDecks = numOfDecks;
             repopulate();
         }
+
+        #region GameCallBackSystem
+        public bool Join(string name)
+        {
+            // Unique name for the game
+            if (gameCallBacks.ContainsKey(name.ToUpper()))
+                return false;
+            else
+            {
+                // Retrieve a clients callback proxy
+                IGameCallBack gcb = OperationContext.Current.GetCallbackChannel<IGameCallBack>();
+
+                gameCallBacks.Add(name.ToUpper(), gcb);
+                Console.WriteLine(name + " has connected.");
+
+                return true;
+            }
+        }
+
+        public void Leave(string name)
+        {
+            if (gameCallBacks.ContainsKey(name.ToUpper()))
+            {
+                gameCallBacks.Remove(name.ToUpper());
+                Console.WriteLine(name + " has disconnected.");
+            }
+        }
+
+
+        private void updateAllUsers()
+        {
+            //String[] msgs = messages.ToArray<string>();
+
+            foreach (IGameCallBack gcb in gameCallBacks.Values)
+                gcb.UpdateDrawn(this._drawnCard);
+
+            //foreach (IUserCallBack cb in userCallbacks.Values)
+            //    cb.SendAllMessages(msgs);
+        }
+
+        #endregion
+
+
 
         // public methods and properties
         // returns the next card
@@ -52,11 +122,13 @@ namespace GolfLibrary
                 if (cardIdx == cards.Count())
                 {
                     throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
-                    
+
                 }
                 else
                 {
                     Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
+                    _drawnCard = cards[cardIdx].sName;
+                    updateAllUsers();
                     return cards[cardIdx++].sName;
                 }
             }
@@ -65,7 +137,35 @@ namespace GolfLibrary
                 Console.Write(ex.Message.ToString());
                 return cards[cardIdx - 1].sName;
             }
-            
+
+        }
+
+        public List<string> DrawThreeCards()
+        {
+            List<string> threecards;
+            try
+            {
+                threecards = new List<string>();
+                for (int i = 0; i < 3; ++i)
+                {
+                    if (cardIdx == cards.Count())
+                    {
+                        throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
+                        threecards.Add(cards[cardIdx++].sName);
+                    }
+                }
+                return threecards;
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message.ToString());
+                return new List<string>();
+            }
         }
 
         // reorder the cards in the shoe
@@ -113,9 +213,9 @@ namespace GolfLibrary
                         // foreach rank in this suit
                         foreach (Card.RankID r in Enum.GetValues(typeof(Card.RankID)))
                         {
-                            if ( !( r == Card.RankID.Joker ))
-                            // add card
-                            cards.Add(new Card(s, r));
+                            if (!(r == Card.RankID.Joker))
+                                // add card
+                                cards.Add(new Card(s, r));
                         }
                     }
                 }
@@ -152,5 +252,13 @@ namespace GolfLibrary
             cardIdx = 0;
 
         }
+
+        public string DiscardedCard
+        {
+            set { _discardCard = value; }
+            get { return _discardCard; }
+        }
+
+
     } // end class
 }

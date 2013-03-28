@@ -17,12 +17,7 @@ namespace GolfService
             try
             {
                 // Address
-                servHost = new ServiceHost(typeof(Shoe),
-                    new Uri("net.tcp://locahost:9000/GolfLibrary/")); // this is the assembly
-
-                // Service contract and binding
-                servHost.AddServiceEndpoint(typeof(IShoe), new NetTcpBinding(),
-                    "Shoe");
+                servHost = new ServiceHost(typeof(GameSystem));
 
                 // Start the service
                 servHost.Open();
