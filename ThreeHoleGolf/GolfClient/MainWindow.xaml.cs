@@ -26,7 +26,7 @@ namespace GolfClient
 
         private IShoe shoe = null;
         private string card = null;
-        private IPlayer player = null;
+        //private IPlayer player = null;
 
         private int numPlayers = 0;
         public MainWindow()
@@ -34,6 +34,35 @@ namespace GolfClient
             InitializeComponent();
             try
             {
+                //Get Username from player
+                //System.Windows.Forms.Form form = new System.Windows.Forms.Form();
+
+                //form.Text = "Help Menu";
+                //form.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+
+                //form.Width = 200;
+                //form.Height = 200;
+
+                //System.Windows.Forms.Label lbl = new System.Windows.Forms.Label();
+                //lbl.Text = "Username: ";
+                //lbl.Height = 40;
+                //lbl.Width = 200;
+
+                //System.Windows.Forms.TextBox tb = new System.Windows.Forms.TextBox();
+                //tb.Height = 40;
+                //tb.Width = 200;
+
+                //System.Windows.Forms.Button button = new System.Windows.Forms.Button();
+                //button.Text = "Submit";
+                //button.Click += button_Click;
+                //button.Height = 40;
+                //button.Width = 200;
+
+                //form.Controls.Add(tb);
+                //form.Controls.Add(lbl);
+                //form.Controls.Add(button);
+                //form.ShowDialog();
+
 
                 // configure the ABCs of using the cardsLibrary as a service
                 ChannelFactory<IShoe> channel = new ChannelFactory<IShoe>(
@@ -43,6 +72,12 @@ namespace GolfClient
                 //Activate the shoe
                 shoe = channel.CreateChannel();
 
+                //DuplexChannelFactory<IPlayer> playerChannel = new DuplexChannelFactory<IPlayer>(this,
+                // new NetTcpBinding(),
+                // new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
+
+                ////Activate the shoe
+                //player = playerChannel.CreateChannel();
                 //ChannelFactory<IPlayer> playerChannel = new ChannelFactory<IPlayer>(
                 //new NetTcpBinding(),
                 //new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
@@ -61,6 +96,7 @@ namespace GolfClient
 
         private void DrawThreeCards()
         {
+
             string card1 = shoe.Draw();
             string card2 = shoe.Draw();
             string card3 = shoe.Draw();
@@ -143,13 +179,20 @@ namespace GolfClient
             {
                 //Draw Card
                 card = shoe.Draw();
+                if (card == "shoe empty")
+                {
+                    btn_blindDeck.Visibility = Visibility.Hidden;
+                    btn_blindDeck_dummy.Visibility = Visibility.Hidden;
+                    //This would be the end of the game
+                }
+                else
+                {
+                    //Show the card drawn in the center
+                    btn_drawnCard.Visibility = Visibility.Visible;
+                    (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card + ".jpg", UriKind.RelativeOrAbsolute));
 
-
-                //Show the card drawn in the center
-                btn_drawnCard.Visibility = Visibility.Visible;
-                (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card + ".jpg", UriKind.RelativeOrAbsolute));
-
-                btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                }
 
                 // Collapsing buttons doesn't work 
                 // Hiding buttons doens't work,
@@ -291,93 +334,95 @@ namespace GolfClient
 
 
             //form.Close();
-            HelpControl helpControl = new HelpControl();
+            //HelpControl helpControl = new HelpControl();
 
 
         }
-
-        
-
-        
-
-
-
-
-
-
-        //var card1Img = btn_card1.Template.FindName("img_card1", ControlTemplate);
-
-
-        //        private void updateCardCounts()
-        //        {
-        //            txtHandCount.Text = lstCards.Items.Count.ToString();
-        //            txtShoeCount.Text = shoe.NumCards.ToString();
-        //        }
-
-        //        private void btnClose_Click(object sender, RoutedEventArgs e)
-        //        {
-        //            this.Close();
-        //        }
-
-        //        private void btnDraw_Click(object sender, RoutedEventArgs e)
-        //        {
-        //            try
-        //            {
-        //                // get a card from the shoe and add it to the hand
-        //                string card = shoe.Draw();
-        //                lstCards.Items.Add(card);
-        //                updateCardCounts();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show(ex.Message);
-        //            }
-        //        }
-
-        //        private void btnShuffle_Click(object sender, RoutedEventArgs e)
-        //        {
-        //            try
-        //            {
-        //                // shuffle the shoe
-        //                shoe.Shuffle();
-
-        //                // reset listbox and card counts
-        //                lstCards.Items.Clear();
-        //                updateCardCounts();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show(ex.Message);
-        //            }
-        //        }
-
-        //        private void sliderDecks_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        //        {
-        //            try
-        //            {
-        //                if (shoe != null)
-        //                {
-        //                    // set the number of decks
-        //                    shoe.NumDecks = (int)(sliderDecks.Value);
-        //                    if (shoe.NumDecks == 1)
-        //                        txtDeckCount.Text = "1 Deck";
-        //                    else
-        //                        txtDeckCount.Text = shoe.NumDecks + " Decks";
-
-        //                    // reset the listbox and card counts
-        //                    lstCards.Items.Clear();
-        //                    updateCardCounts();
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show("Slider error" + ex.Message);
-        //            }
-        //        }
-
-        //        private void btn_drawnCard_Click(object sender, RoutedEventArgs e)
-        //        {
-
-        //        }
     }
 }
+
+
+//public 
+
+
+
+
+
+
+
+
+
+//var card1Img = btn_card1.Template.FindName("img_card1", ControlTemplate);
+
+
+//        private void updateCardCounts()
+//        {
+//            txtHandCount.Text = lstCards.Items.Count.ToString();
+//            txtShoeCount.Text = shoe.NumCards.ToString();
+//        }
+
+//        private void btnClose_Click(object sender, RoutedEventArgs e)
+//        {
+//            this.Close();
+//        }
+
+//        private void btnDraw_Click(object sender, RoutedEventArgs e)
+//        {
+//            try
+//            {
+//                // get a card from the shoe and add it to the hand
+//                string card = shoe.Draw();
+//                lstCards.Items.Add(card);
+//                updateCardCounts();
+//            }
+//            catch (Exception ex)
+//            {
+//                MessageBox.Show(ex.Message);
+//            }
+//        }
+
+//        private void btnShuffle_Click(object sender, RoutedEventArgs e)
+//        {
+//            try
+//            {
+//                // shuffle the shoe
+//                shoe.Shuffle();
+
+//                // reset listbox and card counts
+//                lstCards.Items.Clear();
+//                updateCardCounts();
+//            }
+//            catch (Exception ex)
+//            {
+//                MessageBox.Show(ex.Message);
+//            }
+//        }
+
+//        private void sliderDecks_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+//        {
+//            try
+//            {
+//                if (shoe != null)
+//                {
+//                    // set the number of decks
+//                    shoe.NumDecks = (int)(sliderDecks.Value);
+//                    if (shoe.NumDecks == 1)
+//                        txtDeckCount.Text = "1 Deck";
+//                    else
+//                        txtDeckCount.Text = shoe.NumDecks + " Decks";
+
+//                    // reset the listbox and card counts
+//                    lstCards.Items.Clear();
+//                    updateCardCounts();
+//                }
+//            }
+//            catch (Exception ex)
+//            {
+//                MessageBox.Show("Slider error" + ex.Message);
+//            }
+//        }
+
+//        private void btn_drawnCard_Click(object sender, RoutedEventArgs e)
+//        {
+
+//        }

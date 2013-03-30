@@ -8,7 +8,7 @@ using System.ServiceModel;
 
 namespace GolfLibrary
 {
-    [ServiceContract]
+   [ServiceContract]
     public interface IShoe
     {
         [OperationContract]
@@ -22,8 +22,6 @@ namespace GolfLibrary
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class Shoe : IShoe
     {
-       
-
         // member variables
         private List<Card> cards = new List<Card>();
         private int numDecks = 1;
@@ -49,23 +47,15 @@ namespace GolfLibrary
         {
             try
             {
-                if (cardIdx == cards.Count())
-                {
-                    throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
-                    
-                }
-                else
-                {
-                    Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
-                    return cards[cardIdx++].sName;
-                }
+                Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
+                return cards[cardIdx++].sName;
             }
             catch (Exception ex)
             {
-                Console.Write(ex.Message.ToString());
-                return cards[cardIdx - 1].sName;
+                //Console.Write(ex.Message.ToString());
+                return "shoe empty";
             }
-            
+
         }
 
         // reorder the cards in the shoe
@@ -113,9 +103,9 @@ namespace GolfLibrary
                         // foreach rank in this suit
                         foreach (Card.RankID r in Enum.GetValues(typeof(Card.RankID)))
                         {
-                            if ( !( r == Card.RankID.Joker ))
-                            // add card
-                            cards.Add(new Card(s, r));
+                            if (!(r == Card.RankID.Joker))
+                                // add card
+                                cards.Add(new Card(s, r));
                         }
                     }
                 }
