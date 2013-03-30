@@ -8,10 +8,10 @@ using System.ServiceModel;
 
 namespace GolfLibrary
 {
-<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
-   [ServiceContract]
-    public interface IShoe
-=======
+//<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
+//   [ServiceContract]
+//    public interface IShoe
+//=======
 
 
 
@@ -24,7 +24,7 @@ namespace GolfLibrary
 
     [ServiceContract(CallbackContract = typeof(IGameCallBack))]
     public interface IGameSystem
->>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
+//>>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
     {
         [OperationContract]
         string Draw();
@@ -50,13 +50,13 @@ namespace GolfLibrary
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class GameSystem : IGameSystem
     {
-<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
-=======
+//<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
+//=======
 
 
 
->>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
-        // member variables
+//>>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
+//        // member variables
         private List<Card> cards = new List<Card>();
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;
@@ -127,10 +127,10 @@ namespace GolfLibrary
         {
             try
             {
-<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
-                Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
-                return cards[cardIdx++].sName;
-=======
+//<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
+//                Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
+//                return cards[cardIdx++].sName;
+//=======
                 if (cardIdx == cards.Count())
                 {
                     throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
@@ -143,16 +143,16 @@ namespace GolfLibrary
                     updateAllUsers();
                     return cards[cardIdx++].sName;
                 }
->>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
+//>>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
             }
             catch (Exception ex)
             {
-                //Console.Write(ex.Message.ToString());
+                Console.Write(ex.Message);
                 return "shoe empty";
             }
 
-<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
-=======
+//<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
+//=======
         }
 
         public List<string> DrawThreeCards()
@@ -181,7 +181,7 @@ namespace GolfLibrary
                 Console.Write(ex.Message.ToString());
                 return new List<string>();
             }
->>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
+//>>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
         }
 
         // reorder the cards in the shoe

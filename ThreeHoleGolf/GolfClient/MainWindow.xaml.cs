@@ -28,6 +28,7 @@ namespace GolfClient
     {
         private IGameSystem gameSystem = null;
         private string card = null;
+        private string usrName = "";
         //private IPlayer player = null;
 
         private int numPlayers = 0;
@@ -36,63 +37,30 @@ namespace GolfClient
             InitializeComponent();
             try
             {
-<<<<<<< HEAD
                 //Get Username from player
-                //System.Windows.Forms.Form form = new System.Windows.Forms.Form();
-
-                //form.Text = "Help Menu";
-                //form.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-
-                //form.Width = 200;
-                //form.Height = 200;
-
-                //System.Windows.Forms.Label lbl = new System.Windows.Forms.Label();
-                //lbl.Text = "Username: ";
-                //lbl.Height = 40;
-                //lbl.Width = 200;
-
-                //System.Windows.Forms.TextBox tb = new System.Windows.Forms.TextBox();
-                //tb.Height = 40;
-                //tb.Width = 200;
-
-                //System.Windows.Forms.Button button = new System.Windows.Forms.Button();
-                //button.Text = "Submit";
-                //button.Click += button_Click;
-                //button.Height = 40;
-                //button.Width = 200;
-
-                //form.Controls.Add(tb);
-                //form.Controls.Add(lbl);
-                //form.Controls.Add(button);
-                //form.ShowDialog();
-
-
-=======
-                //btn_discardDeck.Visibility = System.Windows.Visibility.Collapsed;
->>>>>>> master
+                //Login login = new Login();
+                //login.ShowDialog();
+                //if( login.bt
+                
                 // configure the ABCs of using the cardsLibrary as a service
                 DuplexChannelFactory<IGameSystem> channel = new DuplexChannelFactory<IGameSystem>(this, "Game");
-                 
-                
-
                 //Activate the shoe
                 gameSystem = channel.CreateChannel();
+                
+                Login login = new Login();
+                int counter = 0;
+                do
+                {
+                    if (counter > 0)
+                        MessageBox.Show("Invalid Username. Please try another.");
+                    counter++;
 
-<<<<<<< HEAD
-                //DuplexChannelFactory<IPlayer> playerChannel = new DuplexChannelFactory<IPlayer>(this,
-                // new NetTcpBinding(),
-                // new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
+                    login.ShowDialog();
+                }
+                while (!(gameSystem.Join(login.tb_username.Text)));
 
-                ////Activate the shoe
-                //player = playerChannel.CreateChannel();
-                //ChannelFactory<IPlayer> playerChannel = new ChannelFactory<IPlayer>(
-                //new NetTcpBinding(),
-                //new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
-=======
->>>>>>> master
-
-                gameSystem.Join("Randy");
-
+                lbl_userName.Content += login.tb_username.Text;
+                usrName = login.tb_username.Text;
                 DrawThreeCards();
             }
             catch (Exception ex)
@@ -102,25 +70,23 @@ namespace GolfClient
 
         }
 
+        //void userLogin_ContextMenuClosing(object sender, ContextMenuEventArgs e)
+        //{
+        //    MessageBox.Show("Close");
+        //}
+
+        //protected void button_Click(object sender, EventArgs e)
+        //{
+        //    //System.Windows.Forms.Form form = (System.Windows.Forms.Form)this.Parent;
+        //}
+
         private void DrawThreeCards()
         {
-<<<<<<< HEAD
-
-            string card1 = shoe.Draw();
-            string card2 = shoe.Draw();
-            string card3 = shoe.Draw();
-
-            (btn_card1.FindName("face1") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card1 + ".jpg", UriKind.RelativeOrAbsolute));
-            (btn_card2.FindName("face2") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card2 + ".jpg", UriKind.RelativeOrAbsolute));
-            (btn_card3.FindName("face3") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card3 + ".jpg", UriKind.RelativeOrAbsolute));
-=======
             List<string> startingCards;
             try
             {
                 
                 startingCards = gameSystem.DrawThreeCards();
->>>>>>> master
-
                 for (int i = 1; i <= 3; i++)
                 {
                     (btn_card1.FindName("face" + i) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + startingCards[i-1] + ".jpg", UriKind.RelativeOrAbsolute));
@@ -201,32 +167,8 @@ namespace GolfClient
         private void btn_blindDeck_Click(object sender, RoutedEventArgs e)
         {
             if (btn_drawnCard.Visibility == Visibility.Hidden)
-            {
                 //Draw Card
-<<<<<<< HEAD
-                card = shoe.Draw();
-                if (card == "shoe empty")
-                {
-                    btn_blindDeck.Visibility = Visibility.Hidden;
-                    btn_blindDeck_dummy.Visibility = Visibility.Hidden;
-                    //This would be the end of the game
-                }
-                else
-                {
-                    //Show the card drawn in the center
-                    btn_drawnCard.Visibility = Visibility.Visible;
-                    (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card + ".jpg", UriKind.RelativeOrAbsolute));
-
-                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-                }
-
-                // Collapsing buttons doesn't work 
-                // Hiding buttons doens't work,
-                // we may have unregister the event itself and register it again after they discard/keep the drawn cardrf
-=======
                 card = gameSystem.Draw();
->>>>>>> master
-            }
         }
 
        
@@ -364,15 +306,15 @@ namespace GolfClient
             form.Controls.Add(rtb);
             form.ShowDialog();
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
 
-            //form.Close();
-            //HelpControl helpControl = new HelpControl();
+//            //form.Close();
+//            //HelpControl helpControl = new HelpControl();
 
 
-        }
-=======
+//        }
+//=======
         }
 
         private delegate void GuiUpdateDelegate( string drawn );
@@ -400,7 +342,13 @@ namespace GolfClient
         {
             throw new NotImplementedException();
         }
->>>>>>> master
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (gameSystem != null)
+                gameSystem.Leave(usrName);
+        }
+//>>>>>>> master
     }
 }
 
