@@ -21,10 +21,12 @@ namespace GolfClient
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    /// 
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
+        UseSynchronizationContext = false)]
+    public partial class MainWindow : Window, IGameCallBack
     {
-
-        private IShoe shoe = null;
+        private IGameSystem gameSystem = null;
         private string card = null;
         //private IPlayer player = null;
 
@@ -34,6 +36,7 @@ namespace GolfClient
             InitializeComponent();
             try
             {
+<<<<<<< HEAD
                 //Get Username from player
                 //System.Windows.Forms.Form form = new System.Windows.Forms.Form();
 
@@ -64,14 +67,18 @@ namespace GolfClient
                 //form.ShowDialog();
 
 
+=======
+                //btn_discardDeck.Visibility = System.Windows.Visibility.Collapsed;
+>>>>>>> master
                 // configure the ABCs of using the cardsLibrary as a service
-                ChannelFactory<IShoe> channel = new ChannelFactory<IShoe>(
-                 new NetTcpBinding(),
-                 new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
+                DuplexChannelFactory<IGameSystem> channel = new DuplexChannelFactory<IGameSystem>(this, "Game");
+                 
+                
 
                 //Activate the shoe
-                shoe = channel.CreateChannel();
+                gameSystem = channel.CreateChannel();
 
+<<<<<<< HEAD
                 //DuplexChannelFactory<IPlayer> playerChannel = new DuplexChannelFactory<IPlayer>(this,
                 // new NetTcpBinding(),
                 // new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
@@ -81,9 +88,10 @@ namespace GolfClient
                 //ChannelFactory<IPlayer> playerChannel = new ChannelFactory<IPlayer>(
                 //new NetTcpBinding(),
                 //new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
+=======
+>>>>>>> master
 
-                ////Activate the shoe
-                //player = playerChannel.CreateChannel();
+                gameSystem.Join("Randy");
 
                 DrawThreeCards();
             }
@@ -96,6 +104,7 @@ namespace GolfClient
 
         private void DrawThreeCards()
         {
+<<<<<<< HEAD
 
             string card1 = shoe.Draw();
             string card2 = shoe.Draw();
@@ -104,10 +113,23 @@ namespace GolfClient
             (btn_card1.FindName("face1") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card1 + ".jpg", UriKind.RelativeOrAbsolute));
             (btn_card2.FindName("face2") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card2 + ".jpg", UriKind.RelativeOrAbsolute));
             (btn_card3.FindName("face3") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + card3 + ".jpg", UriKind.RelativeOrAbsolute));
+=======
+            List<string> startingCards;
+            try
+            {
+                
+                startingCards = gameSystem.DrawThreeCards();
+>>>>>>> master
 
-            //player.Player_cards.Add(card1);
-            //player.Player_cards.Add(card2);
-            //player.Player_cards.Add(card3);
+                for (int i = 1; i <= 3; i++)
+                {
+                    (btn_card1.FindName("face" + i) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + startingCards[i-1] + ".jpg", UriKind.RelativeOrAbsolute));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         protected void btn_clickTest(object sender, EventArgs e)
@@ -117,10 +139,10 @@ namespace GolfClient
 
             SwapContestantImage("TestPlayer_1", "3", @"\Images\Cards\JackHearts.jpg");
 
-            card = shoe.Draw();
-            int deck_size = shoe.NumCards;
+            card = gameSystem.Draw();
+            int deck_size = gameSystem.NumCards;
             MessageBox.Show(card);
-            MessageBox.Show(""+deck_size);
+            MessageBox.Show("" + deck_size);
 
         }
 
@@ -147,10 +169,14 @@ namespace GolfClient
                 (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
                 (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
             }
-
         }
 
-        public void SwapContestantImage( string _playerID, string _identifier, string newcard)
+        public void SwapRawImage(FrameworkElement btn, string id, string card)
+        {
+            (btn.FindName(id) as Image).Source = new BitmapImage(new Uri(card + ".jpg", UriKind.RelativeOrAbsolute));
+        }
+
+        public void SwapContestantImage(string _playerID, string _identifier, string newcard)
         {
             try
             {
@@ -158,7 +184,6 @@ namespace GolfClient
                 {
                     if (pt.Name == _playerID)
                     {
-                        
                         (pt.FindName("face" + _identifier) as Image).Source = new BitmapImage(new Uri(newcard, UriKind.RelativeOrAbsolute));
                         (pt.FindName("back" + _identifier) as Image).Visibility = System.Windows.Visibility.Hidden;
                         (pt.FindName("face" + _identifier) as Image).Visibility = System.Windows.Visibility.Visible;
@@ -178,6 +203,7 @@ namespace GolfClient
             if (btn_drawnCard.Visibility == Visibility.Hidden)
             {
                 //Draw Card
+<<<<<<< HEAD
                 card = shoe.Draw();
                 if (card == "shoe empty")
                 {
@@ -197,13 +223,17 @@ namespace GolfClient
                 // Collapsing buttons doesn't work 
                 // Hiding buttons doens't work,
                 // we may have unregister the event itself and register it again after they discard/keep the drawn cardrf
+=======
+                card = gameSystem.Draw();
+>>>>>>> master
             }
         }
 
+       
         private void btn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Button b = sender as Button;
-            DataObject dataObject = new DataObject( b );
+            DataObject dataObject = new DataObject(b);
             DragDrop.DoDragDrop(b, dataObject, DragDropEffects.Move);
         }
 
@@ -222,6 +252,9 @@ namespace GolfClient
                 (b.FindName("img_discardDeck") as Image).Visibility = System.Windows.Visibility.Hidden;
 
                 btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+
+                gameSystem.DiscardedCard = (b.FindName("facediscardDeck") as Image).Source.ToString().Split('.')[0];
+                
             }
         }
 
@@ -241,7 +274,7 @@ namespace GolfClient
                 name = draggedFrom_imgFront.Name;
             }
             catch (Exception) { }
-           
+
 
             //Get the button that the image was dropped onto
             Button draggedToButton = sender as Button;
@@ -305,12 +338,12 @@ namespace GolfClient
             form.Width = 600;
             form.Height = 500;
 
-            System.Windows.Forms.RichTextBox rtb = new  System.Windows.Forms.RichTextBox();
+            System.Windows.Forms.RichTextBox rtb = new System.Windows.Forms.RichTextBox();
             rtb.Enabled = false;
             rtb.Width = 590;
             rtb.Height = 500;
 
-            rtb.Text = "The Play\n\n" + 
+            rtb.Text = "The Play\n\n" +
                 "The player to the dealer's left begins, and the turn to play passes clockwise. " +
                 "At your turn you must either draw the top card of the face-down stock, or draw the top discard. " +
                 "You may use the card you draw to replace any one of the six cards of your layout, but if you choose to replace a face-down " +
@@ -331,6 +364,7 @@ namespace GolfClient
             form.Controls.Add(rtb);
             form.ShowDialog();
 
+<<<<<<< HEAD
 
 
             //form.Close();
@@ -338,6 +372,35 @@ namespace GolfClient
 
 
         }
+=======
+        }
+
+        private delegate void GuiUpdateDelegate( string drawn );
+        public void UpdateDrawn(string _drawn)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    btn_drawnCard.Visibility = Visibility.Visible;
+                    (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + _drawn + ".jpg", UriKind.RelativeOrAbsolute));
+
+                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;                  
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new GuiUpdateDelegate(UpdateDrawn), new object[] { _drawn });
+        }
+        
+        public void UpdateGui(CallBackInfo info)
+        {
+            throw new NotImplementedException();
+        }
+>>>>>>> master
     }
 }
 
