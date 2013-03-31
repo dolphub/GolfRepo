@@ -31,7 +31,6 @@ namespace GolfClient
         private string usrName = "";
         //private IPlayer player = null;
 
-        private int numPlayers = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -41,12 +40,12 @@ namespace GolfClient
                 //Login login = new Login();
                 //login.ShowDialog();
                 //if( login.bt
-                
+
                 // configure the ABCs of using the cardsLibrary as a service
                 DuplexChannelFactory<IGameSystem> channel = new DuplexChannelFactory<IGameSystem>(this, "Game");
                 //Activate the shoe
                 gameSystem = channel.CreateChannel();
-                
+
                 Login login = new Login();
                 int counter = 0;
                 do
@@ -60,7 +59,8 @@ namespace GolfClient
                 while (!(gameSystem.Join(login.tb_username.Text)));
 
                 lbl_userName.Content += login.tb_username.Text;
-                usrName = login.tb_username.Text;
+                usrName = formatName(login.tb_username.Text);
+                this.Title = usrName;
                 DrawThreeCards();
             }
             catch (Exception ex)
@@ -70,55 +70,21 @@ namespace GolfClient
 
         }
 
-        //void userLogin_ContextMenuClosing(object sender, ContextMenuEventArgs e)
-        //{
-        //    MessageBox.Show("Close");
-        //}
-
-        //protected void button_Click(object sender, EventArgs e)
-        //{
-        //    //System.Windows.Forms.Form form = (System.Windows.Forms.Form)this.Parent;
-        //}
-
         private void DrawThreeCards()
         {
             List<string> startingCards;
             try
             {
-                
                 startingCards = gameSystem.DrawThreeCards();
                 for (int i = 1; i <= 3; i++)
                 {
-                    (btn_card1.FindName("face" + i) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + startingCards[i-1] + ".jpg", UriKind.RelativeOrAbsolute));
+                    (btn_card1.FindName("face" + i) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + startingCards[i - 1] + ".jpg", UriKind.RelativeOrAbsolute));
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        protected void btn_clickTest(object sender, EventArgs e)
-        {
-
-            SwapImage(false, btn_card1, "1", @"\Images\Cards\SevenDiamonds.jpg");
-
-            SwapContestantImage("TestPlayer_1", "3", @"\Images\Cards\JackHearts.jpg");
-
-            card = gameSystem.Draw();
-            int deck_size = gameSystem.NumCards;
-            MessageBox.Show(card);
-            MessageBox.Show("" + deck_size);
-
-        }
-
-        private void testTemplate_Click_1(object sender, RoutedEventArgs e)
-        {
-            numPlayers++;
-            string PlayerID = "TestPlayer_" + numPlayers;
-            PlayerTemplate pt = new PlayerTemplate(PlayerID, numPlayers * 7);
-            this.PlayerGrid.Children.Add(pt);
-            SwapImage(true, btn_card1, "1", @"\Images\Cards\SevenDiamonds.jpg");
         }
 
         // Swapping and Showing Cards
@@ -171,7 +137,7 @@ namespace GolfClient
                 card = gameSystem.Draw();
         }
 
-       
+
         private void btn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Button b = sender as Button;
@@ -184,19 +150,18 @@ namespace GolfClient
             //Prevent the user from multiple clicks on the this image
             if ((btn_drawnCard.FindName("facedrawnCard") as Image).Source != null)
             {
-                Button b = e.Data.GetData(typeof(Button)) as Button;
-                (b.FindName("facediscardDeck") as Image).Source = (btn_drawnCard.FindName("facedrawnCard") as Image).Source;
+                //Button b = e.Data.GetData(typeof(Button)) as Button;
+                //(b.FindName("facediscardDeck") as Image).Source = (btn_drawnCard.FindName("facedrawnCard") as Image).Source;
 
-                (btn_drawnCard.FindName("facedrawnCard") as Image).Source = null;
-                btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
+                //(btn_drawnCard.FindName("facedrawnCard") as Image).Source = null;
+                //btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
 
-                (b.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
-                (b.FindName("img_discardDeck") as Image).Visibility = System.Windows.Visibility.Hidden;
+                //(b.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
+                //(b.FindName("img_discardDeck") as Image).Visibility = System.Windows.Visibility.Hidden;
 
                 btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-
-                gameSystem.DiscardedCard = (b.FindName("facediscardDeck") as Image).Source.ToString().Split('.')[0];
-                
+                string[] temp = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
+                gameSystem.DiscardedCard = temp[temp.Length-1];
             }
         }
 
@@ -223,8 +188,15 @@ namespace GolfClient
             Grid data = draggedToButton.Content as Grid;
             Image imgFront = data.Children[1] as Image;
             Image imgBack = data.Children[0] as Image;
-            string frontName = imgFront.Name;
-            string backName = imgBack.Name;
+            string frontName = imgFront.Name; // name of the x:name image
+            string backName = imgBack.Name;// not needed
+            string buttonName = draggedToButton.Name; // Button name we dragged to
+            string[] tempfrontName = imgFront.Source.ToString().Split('/');
+            string frontImageName = tempfrontName[tempfrontName.Length - 1].Split('.')[0]; // name of the card
+            
+
+            // Ideally we are goign to just send the names of the buttons and images across 
+            // the service to update on all clients
 
             //Set the bottom card to the image of the drawn card that was dragged down
             if (name != "")
@@ -269,6 +241,16 @@ namespace GolfClient
 
         }
 
+        // format a name for first capital, rest lower
+        private string formatName(string _raw)
+        {
+            string refined = _raw;
+            if (_raw.Length > 1)
+                return _raw[0].ToString().ToUpper() + _raw.Substring(1, _raw.Length - 1).ToLower();
+            else
+                return _raw;
+        }
+
         //Create a popup for the help menu
         private void btn_help_Click(object sender, RoutedEventArgs e)
         {
@@ -306,18 +288,13 @@ namespace GolfClient
             form.Controls.Add(rtb);
             form.ShowDialog();
 
-//<<<<<<< HEAD
-
-
-//            //form.Close();
-//            //HelpControl helpControl = new HelpControl();
-
-
-//        }
-//=======
         }
 
-        private delegate void GuiUpdateDelegate( string drawn );
+        /// <summary>
+        /// Delagate and function for when a player draws a new card
+        /// </summary>
+        /// <param name="drawn"></param>
+        private delegate void UpdateDrawnDelegate( string drawn );
         public void UpdateDrawn(string _drawn)
         {
             if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
@@ -327,7 +304,7 @@ namespace GolfClient
                     btn_drawnCard.Visibility = Visibility.Visible;
                     (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + _drawn + ".jpg", UriKind.RelativeOrAbsolute));
 
-                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;                  
+                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
                 }
                 catch (Exception ex)
                 {
@@ -335,9 +312,109 @@ namespace GolfClient
                 }
             }
             else
-                this.Dispatcher.BeginInvoke(new GuiUpdateDelegate(UpdateDrawn), new object[] { _drawn });
+                this.Dispatcher.BeginInvoke(new UpdateDrawnDelegate(UpdateDrawn), new object[] { _drawn });
         }
-        
+
+        private delegate void UpdateDiscardedDelegate(string discard);
+        public void UpdateDiscard(string _discard)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + _discard + ".jpg", UriKind.RelativeOrAbsolute));
+
+                    (btn_drawnCard.FindName("facedrawnCard") as Image).Source = null;
+                    btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
+
+                    (btn_discardDeck.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
+                    (btn_discardDeck.FindName("img_discardDeck") as Image).Visibility = System.Windows.Visibility.Hidden;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new UpdateDiscardedDelegate(UpdateDiscard), new object[] { _discard });
+
+        }
+
+        private delegate void UpdateContestantCardDelegate(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName);
+        public void UpdateContestantCard(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new UpdateContestantCardDelegate(UpdateContestantCard), new object[] { userName, cards, fromDrawn, btnName });
+        }
+
+        private delegate void NewPlayerDelagate( string[] name );
+        public void NewPlayerJoin(string[] _names)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    this.PlayerGrid.Children.Clear();
+                    for (int i = 0; i < _names.Length; ++i)
+                    {
+                        if (formatName(_names[i]).Equals(usrName))
+                            continue;
+                        PlayerTemplate pt = new PlayerTemplate(formatName(_names[i]), 0);
+                        this.PlayerGrid.Children.Add(pt);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new NewPlayerDelagate(NewPlayerJoin), new object[] { _names });
+        }
+
+        /// <summary>
+        /// Delegate and function for when a player leaves, update the player grid
+        /// to show that the player is no longer playing the game
+        /// </summary>
+        /// <param name="name"></param>
+        private delegate void PlayerDisconnectedDelegate(string[] name);
+        public void PlayerDisconnected(string[] _names)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    this.PlayerGrid.Children.Clear();
+                    for (int i = 0; i < _names.Length; ++i)
+                    {
+                        if (formatName(_names[i]).Equals(usrName))
+                            continue;
+                        PlayerTemplate pt = new PlayerTemplate(formatName(_names[i]), 0);
+                        this.PlayerGrid.Children.Add(pt);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new PlayerDisconnectedDelegate(PlayerDisconnected), new object[] { _names });
+        }
+
+
+
         public void UpdateGui(CallBackInfo info)
         {
             throw new NotImplementedException();
@@ -348,92 +425,10 @@ namespace GolfClient
             if (gameSystem != null)
                 gameSystem.Leave(usrName);
         }
-//>>>>>>> master
+
+
+       
     }
 }
 
 
-//public 
-
-
-
-
-
-
-
-
-
-//var card1Img = btn_card1.Template.FindName("img_card1", ControlTemplate);
-
-
-//        private void updateCardCounts()
-//        {
-//            txtHandCount.Text = lstCards.Items.Count.ToString();
-//            txtShoeCount.Text = shoe.NumCards.ToString();
-//        }
-
-//        private void btnClose_Click(object sender, RoutedEventArgs e)
-//        {
-//            this.Close();
-//        }
-
-//        private void btnDraw_Click(object sender, RoutedEventArgs e)
-//        {
-//            try
-//            {
-//                // get a card from the shoe and add it to the hand
-//                string card = shoe.Draw();
-//                lstCards.Items.Add(card);
-//                updateCardCounts();
-//            }
-//            catch (Exception ex)
-//            {
-//                MessageBox.Show(ex.Message);
-//            }
-//        }
-
-//        private void btnShuffle_Click(object sender, RoutedEventArgs e)
-//        {
-//            try
-//            {
-//                // shuffle the shoe
-//                shoe.Shuffle();
-
-//                // reset listbox and card counts
-//                lstCards.Items.Clear();
-//                updateCardCounts();
-//            }
-//            catch (Exception ex)
-//            {
-//                MessageBox.Show(ex.Message);
-//            }
-//        }
-
-//        private void sliderDecks_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-//        {
-//            try
-//            {
-//                if (shoe != null)
-//                {
-//                    // set the number of decks
-//                    shoe.NumDecks = (int)(sliderDecks.Value);
-//                    if (shoe.NumDecks == 1)
-//                        txtDeckCount.Text = "1 Deck";
-//                    else
-//                        txtDeckCount.Text = shoe.NumDecks + " Decks";
-
-//                    // reset the listbox and card counts
-//                    lstCards.Items.Clear();
-//                    updateCardCounts();
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                MessageBox.Show("Slider error" + ex.Message);
-//            }
-//        }
-
-//        private void btn_drawnCard_Click(object sender, RoutedEventArgs e)
-//        {
-
-//        }

@@ -62,7 +62,6 @@
                 <ScrollViewer VerticalScrollBarVisibility="Visible" >
                     <Grid Grid.Column="1">
                         <StackPanel x:Name="PlayerGrid" VerticalAlignment="Top" Orientation="Vertical">
-                            <Button x:Name="testTemplate" Click="testTemplate_Click_1" Content="Template()" />
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>
@@ -95,7 +94,7 @@
                     </Button>
 
                     <!--Player Card 3-->
-                    <Button x:Name="btn_card3"  Height="150" Width="100" Grid.Column="2" Click="btn_clickTest" AllowDrop="True" Drop="btn_discardDeck_DropBottomCards" >
+                    <Button x:Name="btn_card3"  Height="150" Width="100" Grid.Column="2" AllowDrop="True" Drop="btn_discardDeck_DropBottomCards" >
                         <Grid Width="100" Margin="-5">
                             <Image x:Name="back3" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face3" Stretch="Fill" Visibility="Hidden" />

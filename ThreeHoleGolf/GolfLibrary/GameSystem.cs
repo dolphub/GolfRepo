@@ -8,26 +8,35 @@ using System.ServiceModel;
 
 namespace GolfLibrary
 {
-//<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
-//   [ServiceContract]
-//    public interface IShoe
-//=======
-
-
 
     public interface IGameCallBack
     {
         [OperationContract(IsOneWay = true)]
         void UpdateDrawn(string _drawn);
+
+        [OperationContract(IsOneWay = true)]
+        void UpdateDiscard(string _discard);
+
+        [OperationContract(IsOneWay = true)]
+        void UpdateContestantCard(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName);
+
+        [OperationContract(IsOneWay = true)]
+        void NewPlayerJoin(string[] _names);
+
+        [OperationContract(IsOneWay = true)]
+        void PlayerDisconnected(string[] _names);
+
         //void UpdateDiscard(string _discard);
     }
 
     [ServiceContract(CallbackContract = typeof(IGameCallBack))]
     public interface IGameSystem
-//>>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
     {
         [OperationContract]
         string Draw();
+
+        [OperationContract]
+        void ContestentSwap(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName);
 
         [OperationContract]
         List<string> DrawThreeCards();
@@ -50,19 +59,13 @@ namespace GolfLibrary
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class GameSystem : IGameSystem
     {
-//<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
-//=======
-
-
-
-//>>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
 //        // member variables
         private List<Card> cards = new List<Card>();
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;
         private int cardIdx;
         private string _drawnCard, _discardCard;
-
+        
 
         // C'tors
         public GameSystem()
@@ -92,6 +95,12 @@ namespace GolfLibrary
                 gameCallBacks.Add(name.ToUpper(), gcb);
                 Console.WriteLine(name + " has connected.");
 
+                if (gameCallBacks.Count > 1)
+                {
+                    foreach (IGameCallBack cb in gameCallBacks.Values)
+                        cb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
+                }
+
                 return true;
             }
         }
@@ -102,19 +111,18 @@ namespace GolfLibrary
             {
                 gameCallBacks.Remove(name.ToUpper());
                 Console.WriteLine(name + " has disconnected.");
+
+                if (gameCallBacks.Count > 0)
+                {
+                    foreach (IGameCallBack cb in gameCallBacks.Values)
+                        cb.PlayerDisconnected(gameCallBacks.Keys.ToArray());
+                }
             }
         }
 
 
         private void updateAllUsers()
         {
-            //String[] msgs = messages.ToArray<string>();
-
-            foreach (IGameCallBack gcb in gameCallBacks.Values)
-                gcb.UpdateDrawn(this._drawnCard);
-
-            //foreach (IUserCallBack cb in userCallbacks.Values)
-            //    cb.SendAllMessages(msgs);
         }
 
         #endregion
@@ -127,10 +135,6 @@ namespace GolfLibrary
         {
             try
             {
-//<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
-//                Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
-//                return cards[cardIdx++].sName;
-//=======
                 if (cardIdx == cards.Count())
                 {
                     throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
@@ -140,19 +144,28 @@ namespace GolfLibrary
                 {
                     Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
                     _drawnCard = cards[cardIdx].sName;
-                    updateAllUsers();
+
+                    //Update all clients
+                    foreach (IGameCallBack gcb in gameCallBacks.Values)
+                        gcb.UpdateDrawn(this._drawnCard);
+
                     return cards[cardIdx++].sName;
                 }
-//>>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
             }
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
                 return "shoe empty";
             }
+        }
 
-//<<<<<<< HEAD:ThreeHoleGolf/GolfLibrary/Shoe.cs
-//=======
+        private string formatName(string _raw)
+        {
+            string refined = _raw;
+            if (_raw.Length > 1)
+                return _raw[0].ToString().ToUpper() + _raw.Substring(1, _raw.Length - 1).ToLower();
+            else
+                return _raw;  
         }
 
         public List<string> DrawThreeCards()
@@ -181,7 +194,6 @@ namespace GolfLibrary
                 Console.Write(ex.Message.ToString());
                 return new List<string>();
             }
-//>>>>>>> master:ThreeHoleGolf/GolfLibrary/GameSystem.cs
         }
 
         // reorder the cards in the shoe
@@ -271,10 +283,20 @@ namespace GolfLibrary
 
         public string DiscardedCard
         {
-            set { _discardCard = value; }
+            set {
+                _discardCard = value;
+
+                foreach (IGameCallBack gcb in gameCallBacks.Values)
+                    gcb.UpdateDiscard(_discardCard);
+            }
             get { return _discardCard; }
         }
 
 
+        public void ContestentSwap(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName)
+        {
+            foreach (IGameCallBack gcb in gameCallBacks.Values)
+                gcb.UpdateContestantCard(userName, cards, fromDrawn, btnName);
+        }
     } // end class
 }
