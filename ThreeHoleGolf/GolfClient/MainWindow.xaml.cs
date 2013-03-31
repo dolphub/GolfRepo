@@ -21,9 +21,13 @@ namespace GolfClient
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    /// 
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
+    UseSynchronizationContext = false)]
+    public partial class MainWindow : Window, ICallBack
     {
 
+        private Guid myCallBackKey;
         private IShoe shoe = null;
         private string card = null;
         private IPlayer player = null;
@@ -36,12 +40,13 @@ namespace GolfClient
             {
                 //btn_discardDeck.Visibility = System.Windows.Visibility.Collapsed;
                 // configure the ABCs of using the cardsLibrary as a service
-                ChannelFactory<IShoe> channel = new ChannelFactory<IShoe>(
-                 new NetTcpBinding(),
-                 new EndpointAddress("net.tcp://localhost:9000/GolfLibrary/Shoe"));
+                DuplexChannelFactory<IShoe> channel = 
+                    new DuplexChannelFactory<IShoe>(this, "ShoeEndPoint");
 
                 //Activate the shoe
                 shoe = channel.CreateChannel();
+
+                myCallBackKey = shoe.RegisterForCallbacks();
 
                 //ChannelFactory<IPlayer> playerChannel = new ChannelFactory<IPlayer>(
                 //new NetTcpBinding(),
@@ -58,6 +63,29 @@ namespace GolfClient
             }
 
         }
+
+        private delegate void ClientUpdateDelegate(CallBackInfo info);
+
+        public void UpdateGui(CallBackInfo info)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                //try
+                //{
+                //    listMessages.ItemsSource = msgBrd.getAllMessages();
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //}
+            }
+            else
+                this.Dispatcher.BeginInvoke(new ClientUpdateDelegate(UpdateGui), new object[] 
+                {
+                    info
+                });
+        }
+
 
         private void DrawThreeCards()
         {
@@ -139,23 +167,6 @@ namespace GolfClient
         //Draw a card from the deck
         private void btn_blindDeck_Click(object sender, RoutedEventArgs e)
         {
-            //<<<<<<< HEAD
-            //            //Draw Card
-            //            CurrentCard = shoe.Draw();
-
-            //            //Show the card drawn in the center
-            //            btn_drawnCard.Visibility = Visibility.Visible;
-            //            (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + CurrentCard + ".jpg", UriKind.RelativeOrAbsolute));
-            //            this.btn_blindDeck.IsEnabled = false;
-
-            //            //Enable Options
-            //            btn_discardOption.IsEnabled = true;
-            //            btn_discardOption.Visibility = System.Windows.Visibility.Visible;
-            //            btn_KeepOption.IsEnabled = true;
-            //            btn_KeepOption.Visibility = System.Windows.Visibility.Visible;
-
-
-            //=======
             if (btn_drawnCard.Visibility == Visibility.Hidden)
             {
                 //Draw Card
@@ -170,35 +181,10 @@ namespace GolfClient
                 //>>>>>>> tjbranch
 
                 // Collapsing buttons doesn't work 
-                // Hiding buttons doens't work,
+                // Hiding buttons doens't work, 
                 // we may have unregister the event itself and register it again after they discard/keep the drawn cardrf
             }
         }
-
-        //<<<<<<< HEAD
-        //private void btn_Discard_Click_1(object sender, RoutedEventArgs e)
-        //{
-        //    this.btn_drawnCard.Visibility = System.Windows.Visibility.Collapsed;
-        //    btn_discardDeck.Visibility = System.Windows.Visibility.Visible;
-        //    // Set Discarded Cardpile to the most recent card
-        //    Image i = new Image();
-        //    i.Source = new BitmapImage(new Uri(@"\Images\Cards\" + card + ".jpg", UriKind.RelativeOrAbsolute));
-        //    (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + CurrentCard + ".jpg", UriKind.RelativeOrAbsolute));
-        //    btn_blindDeck.IsEnabled = true;
-
-        //    btn_discardOption.IsEnabled = false;
-        //    btn_discardOption.Visibility = System.Windows.Visibility.Hidden;
-        //    btn_KeepOption.IsEnabled = false;
-        //    btn_KeepOption.Visibility = System.Windows.Visibility.Hidden;
-
-        //}
-
-        //private void btn_Keep_Click_1(object sender, RoutedEventArgs e)
-        //{
-
-        //}
-
-        //=======
         private void btn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Button b = sender as Button;
@@ -332,95 +318,22 @@ namespace GolfClient
 
 
 
-            //form.Close();
-            //HelpControl helpControl = new HelpControl();
+        }
 
-
+        private void Window_Closing_1(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            try
+            {
+                // Exit gracefully from the Shoe's callback service
+                if (myCallBackKey != Guid.Empty)
+                    shoe.UnregisterForCallbacks(myCallBackKey);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
 
-
-        //>>>>>>> tjbranch
-
-
-
-
-
-
-
-        //var card1Img = btn_card1.Template.FindName("img_card1", ControlTemplate);
-
-
-        //        private void updateCardCounts()
-        //        {
-        //            txtHandCount.Text = lstCards.Items.Count.ToString();
-        //            txtShoeCount.Text = shoe.NumCards.ToString();
-        //        }
-
-        //        private void btnClose_Click(object sender, RoutedEventArgs e)
-        //        {
-        //            this.Close();
-        //        }
-
-        //        private void btnDraw_Click(object sender, RoutedEventArgs e)
-        //        {
-        //            try
-        //            {
-        //                // get a card from the shoe and add it to the hand
-        //                string card = shoe.Draw();
-        //                lstCards.Items.Add(card);
-        //                updateCardCounts();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show(ex.Message);
-        //            }
-        //        }
-
-        //        private void btnShuffle_Click(object sender, RoutedEventArgs e)
-        //        {
-        //            try
-        //            {
-        //                // shuffle the shoe
-        //                shoe.Shuffle();
-
-        //                // reset listbox and card counts
-        //                lstCards.Items.Clear();
-        //                updateCardCounts();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show(ex.Message);
-        //            }
-        //        }
-
-        //        private void sliderDecks_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        //        {
-        //            try
-        //            {
-        //                if (shoe != null)
-        //                {
-        //                    // set the number of decks
-        //                    shoe.NumDecks = (int)(sliderDecks.Value);
-        //                    if (shoe.NumDecks == 1)
-        //                        txtDeckCount.Text = "1 Deck";
-        //                    else
-        //                        txtDeckCount.Text = shoe.NumDecks + " Decks";
-
-        //                    // reset the listbox and card counts
-        //                    lstCards.Items.Clear();
-        //                    updateCardCounts();
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show("Slider error" + ex.Message);
-        //            }
-        //        }
-
-        //        private void btn_drawnCard_Click(object sender, RoutedEventArgs e)
-        //        {
-
-        //        }
     }
 }

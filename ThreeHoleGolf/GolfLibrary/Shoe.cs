@@ -8,13 +8,23 @@ using System.ServiceModel;
 
 namespace GolfLibrary
 {
-    [ServiceContract]
+
+
+    public interface ICallBack
+    {
+        [OperationContract(IsOneWay = true)]
+        void UpdateGui(CallBackInfo info);
+    }
+
+
+
+    [ServiceContract(CallbackContract = typeof(ICallBack))]
     public interface IShoe
     {
-        [OperationContract]
-        string Draw();
-        [OperationContract]
-        void Shuffle();
+        [OperationContract]                     Guid RegisterForCallbacks();
+        [OperationContract(IsOneWay = true)]    void UnregisterForCallbacks(Guid key);
+        [OperationContract]                     string Draw();
+        [OperationContract]                     void Shuffle();
         int NumCards { [OperationContract] get; }
         int NumDecks { [OperationContract] get; [OperationContract] set; }
     }
@@ -25,10 +35,13 @@ namespace GolfLibrary
        
 
         // member variables
+
+        private Dictionary<Guid, ICallBack> clientCallBacks = new Dictionary<Guid, ICallBack>();
         private List<Card> cards = new List<Card>();
         private int numDecks = 1;
         private int cardIdx;
 
+        #region Ctors
         // C'tors
         public Shoe()
         {
@@ -42,6 +55,41 @@ namespace GolfLibrary
             numDecks = numOfDecks;
             repopulate();
         }
+        #endregion
+
+
+        #region register/unregister CallBacks
+        // A client will call this method to register its intent to receive 
+        // Message updates via the callback mechanism
+        public Guid RegisterForCallbacks()
+        {
+            ICallBack cb = OperationContext.Current.GetCallbackChannel<ICallBack>();
+
+            Guid key = Guid.NewGuid();
+            clientCallBacks.Add(key, cb);
+
+            return key;
+        }
+
+        // A client willc all this method to register its wish
+        // to no longer receive message updates via the callback mechanism
+        public void UnregisterForCallbacks(Guid key)
+        {
+            if (clientCallBacks.Keys.Contains<Guid>(key))
+                clientCallBacks.Remove(key);
+        }
+        #endregion
+
+        // Notiffies every connected (and "registered") client of the message's current state
+        private void updateAllClients(bool reset)
+        {
+            CallBackInfo info = new CallBackInfo(reset);
+
+            foreach (ICallBack cb in clientCallBacks.Values)
+                cb.UpdateGui(info);
+
+        }
+
 
         // public methods and properties
         // returns the next card
