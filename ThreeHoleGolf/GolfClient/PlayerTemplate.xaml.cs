@@ -32,7 +32,7 @@ namespace GolfClient
             //};
             this.PlayerName.Content += _name;
             this.PlayerScore.Content += _score.ToString();
-            this.Name = _name;
+            this.Name = _name.Replace('_', ' ');
         }
 
     }

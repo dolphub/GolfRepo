@@ -403,9 +403,9 @@ namespace GolfClient
                     this.PlayerGrid.Children.Clear();
                     for (int i = 0; i < _names.Length; ++i)
                     {
-                        if (formatName(_names[i]).Equals(usrName))
+                        if (formatName(_names[i]).Equals(usrName.Replace(' ', '_')))
                             continue;
-                        PlayerTemplate pt = new PlayerTemplate(formatName(_names[i]), 0);
+                        PlayerTemplate pt = new PlayerTemplate(formatName(_names[i]).Replace(' ','_'), 0);
                         this.PlayerGrid.Children.Add(pt);
                     }
                 }
