@@ -44,7 +44,7 @@
     <Compile Include="CallBackInfo.cs" />
     <Compile Include="Card.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="Shoe.cs" />
+    <Compile Include="GameSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

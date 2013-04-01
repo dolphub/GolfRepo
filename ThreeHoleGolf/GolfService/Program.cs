@@ -16,8 +16,10 @@ namespace GolfService
             ServiceHost servHost = null;
             try
             {
-                // Create a service host object
-                servHost = new ServiceHost(typeof(Shoe));
+                // Address
+                servHost = new ServiceHost(typeof(GameSystem));
+
+                // Start the service
                 servHost.Open();
 
                 // wait for a keystroke to shut down the service, 
