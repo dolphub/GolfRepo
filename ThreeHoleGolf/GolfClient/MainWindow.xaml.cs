@@ -36,16 +36,12 @@ namespace GolfClient
             
             try
             {
-                //Get Username from player
-                //Login login = new Login();
-                //login.ShowDialog();
-                //if( login.bt
-
                 // configure the ABCs of using the cardsLibrary as a service
                 DuplexChannelFactory<IGameSystem> channel = new DuplexChannelFactory<IGameSystem>(this, "Game");
                 //Activate the shoe
                 gameSystem = channel.CreateChannel();
 
+                //Get Username from player
                 Login login = new Login();
                 int counter = 0;
                 do
@@ -58,7 +54,6 @@ namespace GolfClient
                 }
                 while (!(gameSystem.Join(login.tb_username.Text)));
                 InitializeComponent();
-
                 lbl_userName.Content += login.tb_username.Text;
                 usrName = formatName(login.tb_username.Text);
                 this.Title = usrName;
@@ -66,6 +61,7 @@ namespace GolfClient
             }
             catch (Exception ex)
             {
+                this.Close();
                 MessageBox.Show(ex.Message);
             }
 
