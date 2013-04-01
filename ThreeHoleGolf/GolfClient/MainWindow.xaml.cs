@@ -33,7 +33,7 @@ namespace GolfClient
 
         public MainWindow()
         {
-            InitializeComponent();
+            
             try
             {
                 //Get Username from player
@@ -57,6 +57,7 @@ namespace GolfClient
                     login.ShowDialog();
                 }
                 while (!(gameSystem.Join(login.tb_username.Text)));
+                InitializeComponent();
 
                 lbl_userName.Content += login.tb_username.Text;
                 usrName = formatName(login.tb_username.Text);
@@ -69,6 +70,7 @@ namespace GolfClient
             }
 
         }
+
 
         private void DrawThreeCards()
         {
@@ -112,16 +114,7 @@ namespace GolfClient
         {
             try
             {
-                foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
-                {
-                    if (pt.Name == _playerID)
-                    {
-                        (pt.FindName("face" + _identifier) as Image).Source = new BitmapImage(new Uri(newcard, UriKind.RelativeOrAbsolute));
-                        (pt.FindName("back" + _identifier) as Image).Visibility = System.Windows.Visibility.Hidden;
-                        (pt.FindName("face" + _identifier) as Image).Visibility = System.Windows.Visibility.Visible;
-                        break;
-                    }
-                }
+  
             }
             catch (Exception ex)
             {
@@ -150,15 +143,6 @@ namespace GolfClient
             //Prevent the user from multiple clicks on the this image
             if ((btn_drawnCard.FindName("facedrawnCard") as Image).Source != null)
             {
-                //Button b = e.Data.GetData(typeof(Button)) as Button;
-                //(b.FindName("facediscardDeck") as Image).Source = (btn_drawnCard.FindName("facedrawnCard") as Image).Source;
-
-                //(btn_drawnCard.FindName("facedrawnCard") as Image).Source = null;
-                //btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
-
-                //(b.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
-                //(b.FindName("img_discardDeck") as Image).Visibility = System.Windows.Visibility.Hidden;
-
                 btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                 string[] temp = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
                 gameSystem.DiscardedCard = temp[temp.Length-1];
@@ -188,55 +172,37 @@ namespace GolfClient
             Grid data = draggedToButton.Content as Grid;
             Image imgFront = data.Children[1] as Image;
             Image imgBack = data.Children[0] as Image;
-            string frontName = imgFront.Name; // name of the x:name image
+            string objectName = imgFront.Name; // name of the x:name image
             string backName = imgBack.Name;// not needed
             string buttonName = draggedToButton.Name; // Button name we dragged to
             string[] tempfrontName = imgFront.Source.ToString().Split('/');
-            string frontImageName = tempfrontName[tempfrontName.Length - 1].Split('.')[0]; // name of the card
-            
+            //string newSwapImg = tempfrontName[tempfrontName.Length - 1].Split('.')[0]; // name of the card
 
-            // Ideally we are goign to just send the names of the buttons and images across 
-            // the service to update on all clients
+            string oldSwapImg = "";
 
             //Set the bottom card to the image of the drawn card that was dragged down
             if (name != "")
             {
                 //Draged from the discard pile
                 //Set the user card image to the discarded card image
-                ImageSource tempSource = (draggedToButton.FindName(frontName) as Image).Source;
-                (draggedToButton.FindName(frontName) as Image).Source = (draggedFromButton.FindName(draggedFrom_imgFront.Name) as Image).Source;
+                //gameSystem.ContestentSwap(this.usrName, 
+                string[] tempOldCard = (draggedFromButton.FindName(objectName) as Image).Source.ToString().Split('/');
+                oldSwapImg = tempOldCard[tempOldCard.Length - 1].Split('.')[0];
 
-                //Set the discarded card image to the replaced user card image
-                (draggedFromButton.FindName(draggedFrom_imgFront.Name) as Image).Source = tempSource;
+                string[] tempNewCard = ((btn_discardDeck.FindName("facediscardDeck") as Image).Source.ToString().Split('.')[0]).Split('/');
+                string newSwapImg = tempNewCard[tempNewCard.Length - 1];
 
-                //Turn over the players card
-                (draggedToButton.FindName(frontName) as Image).Visibility = System.Windows.Visibility.Visible;
-                (draggedToButton.FindName(backName) as Image).Visibility = System.Windows.Visibility.Hidden;
+                gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, true, buttonName, objectName);
             }
             else
             {
-                //Draged from the drawn card
-                //Set the card that is replaced to the top of the discard pile
-                ImageSource tempSource = (draggedToButton.FindName(frontName) as Image).Source;
+                string[] tempOldCard = (draggedToButton.FindName(objectName) as Image).Source.ToString().Split('/');
+                oldSwapImg = tempOldCard[tempOldCard.Length - 1].Split('.')[0];
 
-                //Set the player card to the drawn card
-                (draggedToButton.FindName(frontName) as Image).Source = (draggedFromButton.FindName("facedrawnCard") as Image).Source;
+                string[] tempNewCard = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
+                string newSwapImg = tempNewCard[tempNewCard.Length - 1];
 
-                //Set the discard pile top card to the player card that was replaced
-                (btn_discardDeck.FindName("facediscardDeck") as Image).Source = tempSource;
-
-                //Make the face card shown and the back of the card hidden
-                (btn_discardDeck.FindName("img_discardDeck") as Image).Visibility = Visibility.Hidden;
-                (btn_discardDeck.FindName("facediscardDeck") as Image).Visibility = Visibility.Visible;
-
-                //Hide the drawn card
-                draggedFromButton.Visibility = System.Windows.Visibility.Hidden;
-
-                //Turn the newly added user card over
-                (draggedToButton.FindName(frontName) as Image).Visibility = System.Windows.Visibility.Visible;
-                (draggedToButton.FindName(backName) as Image).Visibility = System.Windows.Visibility.Hidden;
-
-                btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName);
             }
 
         }
@@ -290,6 +256,9 @@ namespace GolfClient
 
         }
 
+        #region CallBack Delegates
+
+
         /// <summary>
         /// Delagate and function for when a player draws a new card
         /// </summary>
@@ -329,6 +298,7 @@ namespace GolfClient
 
                     (btn_discardDeck.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
                     (btn_discardDeck.FindName("img_discardDeck") as Image).Visibility = System.Windows.Visibility.Hidden;
+                    btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                 }
                 catch (Exception ex)
                 {
@@ -340,14 +310,79 @@ namespace GolfClient
 
         }
 
-        private delegate void UpdateContestantCardDelegate(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName);
-        public void UpdateContestantCard(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName)
+        private delegate void UpdateContestantCardDelegate(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName);
+        public void UpdateContestantCard(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName)
         {
             if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
             {
                 try
                 {
-                    
+                    // we swapped the card
+                    if (userName == this.usrName)
+                    {
+                        if (fromDiscard)
+                        {
+                            (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + oldCard + ".jpg", UriKind.RelativeOrAbsolute));
+                            Button droppedToBtn = userCardGrid.FindName(btnName) as Button;
+                            (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
+                            (droppedToBtn.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
+                            btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                        }
+                        else
+                        {
+
+                            (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + oldCard + ".jpg", UriKind.RelativeOrAbsolute));
+                            (btn_discardDeck.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
+
+                            Button droppedToBtn = userCardGrid.FindName(btnName) as Button;
+                            (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
+                            (droppedToBtn.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
+
+                            btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
+                        }
+                    }
+                    else // someone else did, update the players panel
+                    {
+                        if (fromDiscard)
+                        {
+                            (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + oldCard + ".jpg", UriKind.RelativeOrAbsolute));
+                            
+                            // swap contestent images
+                            foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
+                            {
+                                if (pt.Name == userName)
+                                {
+                                    (pt.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
+                                    (pt.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
+                                    break;
+                                }
+                            }
+                            btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+
+                        }
+                        else
+                        {
+                            (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + oldCard + ".jpg", UriKind.RelativeOrAbsolute));
+                            (btn_discardDeck.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
+                            btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
+
+                            foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
+                            {
+                                if (pt.Name == userName)
+                                {
+                                    (pt.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
+                                    (pt.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -355,7 +390,7 @@ namespace GolfClient
                 }
             }
             else
-                this.Dispatcher.BeginInvoke(new UpdateContestantCardDelegate(UpdateContestantCard), new object[] { userName, cards, fromDrawn, btnName });
+                this.Dispatcher.BeginInvoke(new UpdateContestantCardDelegate(UpdateContestantCard), new object[] { userName, newCard, oldCard, fromDiscard, btnName, objectName });
         }
 
         private delegate void NewPlayerDelagate( string[] name );
@@ -419,6 +454,8 @@ namespace GolfClient
         {
             throw new NotImplementedException();
         }
+
+        #endregion
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

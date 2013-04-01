@@ -22,8 +22,9 @@ namespace GolfService
                 // Start the service
                 servHost.Open();
 
-                // Keep the server running until <Enter> is pressed
-                Console.WriteLine("Shoe service is activated. Press <Enter> to quit.");
+                // wait for a keystroke to shut down the service, 
+                Console.WriteLine("Press any key to shut the service down. ");
+                Console.ReadKey();
             }
             catch (Exception ex)
             {
