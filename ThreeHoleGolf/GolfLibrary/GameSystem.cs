@@ -18,7 +18,7 @@ namespace GolfLibrary
         void UpdateDiscard(string _discard);
 
         [OperationContract(IsOneWay = true)]
-        void UpdateContestantCard(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName);
+        void UpdateContestantCard(string userName, string newCard, string oldCard, bool fromDrawn, string btnName, string objectName);
 
         [OperationContract(IsOneWay = true)]
         void NewPlayerJoin(string[] _names);
@@ -36,7 +36,7 @@ namespace GolfLibrary
         string Draw();
 
         [OperationContract]
-        void ContestentSwap(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName);
+        void ContestentSwap(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName);
 
         [OperationContract]
         List<string> DrawThreeCards();
@@ -293,10 +293,10 @@ namespace GolfLibrary
         }
 
 
-        public void ContestentSwap(string userName, Dictionary<string, string> cards, bool fromDrawn, string btnName)
+        public void ContestentSwap(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName)
         {
             foreach (IGameCallBack gcb in gameCallBacks.Values)
-                gcb.UpdateContestantCard(userName, cards, fromDrawn, btnName);
+                gcb.UpdateContestantCard(userName, newCard, oldCard, fromDiscard, btnName, objectName);
         }
     } // end class
 }
