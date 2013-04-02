@@ -4,22 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Runtime.Serialization;
+
+
 using System.ServiceModel;
 
 namespace GolfLibrary
 {
-    [ServiceContract]
-    public interface IPlayer
-    {
-        string Name { [OperationContract] get; [OperationContract] set; }
-        int Points { [OperationContract] get; [OperationContract] set; }
-        List<string> Player_cards { [OperationContract] get; [OperationContract] set; }
-    }
-
-    class Player
+    
+    [Serializable]
+    public class Player
     {
         public string Name { get; set; }
+        
         public int Points { get; set; }
-        public List<string> Player_cards { get; set; }
+        
+        public bool isReady { get; set; }
+        
+        public Player(string _name, bool _isReady)
+        {
+            this.Name = _name;
+            this.isReady = _isReady;
+            this.Points = 0;
+        }
     }
 }

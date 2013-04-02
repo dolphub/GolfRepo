@@ -26,6 +26,18 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void PlayerDisconnected(string[] _names);
 
+        [OperationContract(IsOneWay = true)]
+        void UpdateQueue(string userName, bool isReady, bool StartGame, bool hasEnoughPlayers);
+
+        [OperationContract(IsOneWay = true)]
+        void UpdateGameState(Player[] _players);
+
+        [OperationContract(IsOneWay = true)]
+        void ResetClients();
+
+
+
+
         //void UpdateDiscard(string _discard);
     }
 
@@ -39,11 +51,27 @@ namespace GolfLibrary
         void ContestentSwap(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName);
 
         [OperationContract]
+        void UpdateQueue(string username, bool isReady);
+
+        [OperationContract]
         List<string> DrawThreeCards();
 
         [OperationContract(IsOneWay = true)]
         void Shuffle();
 
+        [OperationContract]
+        void GameState();
+
+        [OperationContract]
+        void ResetGame();
+
+        [OperationContract]
+        void StartGame();
+
+
+        
+
+        
         [OperationContract]
         bool Join(string name);
 
@@ -53,18 +81,19 @@ namespace GolfLibrary
         int NumCards { [OperationContract] get; }
         int NumDecks { [OperationContract] get; [OperationContract] set; }
         string DiscardedCard { [OperationContract]get; [OperationContract]set; }
-
     }
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class GameSystem : IGameSystem
     {
-//        // member variables
+        // member variables
         private List<Card> cards = new List<Card>();
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;
         private int cardIdx;
         private string _drawnCard, _discardCard;
+        public List<Player> Players;
+        private bool _gameInProgrees = false;
         
 
         // C'tors
@@ -72,6 +101,7 @@ namespace GolfLibrary
         {
             cardIdx = 0;
             repopulate();
+            Players = new List<Player>();
         }
 
         public GameSystem(int numOfDecks)
@@ -79,6 +109,7 @@ namespace GolfLibrary
             cardIdx = 0;
             numDecks = numOfDecks;
             repopulate();
+            Players = new List<Player>();
         }
 
         #region GameCallBackSystem
@@ -93,6 +124,7 @@ namespace GolfLibrary
                 IGameCallBack gcb = OperationContext.Current.GetCallbackChannel<IGameCallBack>();
 
                 gameCallBacks.Add(name.ToUpper(), gcb);
+                Players.Add(new Player(name.ToUpper(), false));
                 Console.WriteLine(name + " has connected.");
 
                 if (gameCallBacks.Count > 1)
@@ -101,6 +133,7 @@ namespace GolfLibrary
                         cb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
                 }
 
+                //this._gameQueue++;
                 return true;
             }
         }
@@ -109,6 +142,9 @@ namespace GolfLibrary
         {
             if (gameCallBacks.ContainsKey(name.ToUpper()))
             {
+                var p = Players.FirstOrDefault<Player>(player => player.Name == name.ToUpper());
+
+                Players.Remove((Player)p);
                 gameCallBacks.Remove(name.ToUpper());
                 Console.WriteLine(name + " has disconnected.");
 
@@ -120,6 +156,35 @@ namespace GolfLibrary
             }
         }
 
+        public void UpdateQueue(string username, bool isReady)
+        {
+            int queue = 0;
+            bool startGame = false;
+            bool hasEnoughPlayers = false;
+
+            if (Players.Count > 1)
+                hasEnoughPlayers = true;
+
+            Players.All(p => {
+                if (p.Name == username.ToUpper())
+                    p.isReady = isReady;
+                if (!p.isReady)
+                    ++queue;
+                return true;
+            });
+
+            if (queue == 0)
+                startGame = true;
+
+            foreach (IGameCallBack gcb in gameCallBacks.Values)
+                gcb.UpdateQueue(username, isReady, startGame, hasEnoughPlayers);
+        }
+
+        public void ContestentSwap(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName)
+        {
+            foreach (IGameCallBack gcb in gameCallBacks.Values)
+                gcb.UpdateContestantCard(userName, newCard, oldCard, fromDiscard, btnName, objectName);
+        }
 
         private void updateAllUsers()
         {
@@ -161,6 +226,17 @@ namespace GolfLibrary
             }
         }
 
+        /// <summary>
+        /// Resets the game to a start point, after points
+        /// calculation
+        /// </summary>
+        public void ResetGame()
+        {
+            this.Shuffle();
+            foreach (IGameCallBack gcb in gameCallBacks.Values)
+                gcb.ResetClients();
+        }
+
         private string formatName(string _raw)
         {
             string refined = _raw;
@@ -181,7 +257,6 @@ namespace GolfLibrary
                     if (cardIdx == cards.Count())
                     {
                         throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
-
                     }
                     else
                     {
@@ -203,6 +278,24 @@ namespace GolfLibrary
         {
             randomizeCards();
         }
+
+        public void GameState()
+        {
+            foreach (IGameCallBack gcb in gameCallBacks.Values)
+                gcb.UpdateGameState(Players.ToArray());
+        }
+
+
+        public void StartGame()
+        {
+            if( !this._gameInProgrees )
+                this._gameInProgrees = true;
+
+
+
+
+        }
+
 
         // number of cards remaining in the shoe
         public int NumCards
@@ -306,6 +399,8 @@ namespace GolfLibrary
 
         }
 
+
+        // Game Wide set the discarded card
         public string DiscardedCard
         {
             set {
@@ -318,10 +413,6 @@ namespace GolfLibrary
         }
 
 
-        public void ContestentSwap(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName)
-        {
-            foreach (IGameCallBack gcb in gameCallBacks.Values)
-                gcb.UpdateContestantCard(userName, newCard, oldCard, fromDiscard, btnName, objectName);
-        }
+
     } // end class
 }
