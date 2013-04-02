@@ -125,6 +125,8 @@ namespace GolfLibrary
         {
         }
 
+
+
         #endregion
 
 
@@ -242,14 +244,37 @@ namespace GolfLibrary
                         foreach (Card.RankID r in Enum.GetValues(typeof(Card.RankID)))
                         {
                             if (!(r == Card.RankID.Joker))
+                            {
                                 // add card
-                                cards.Add(new Card(s, r));
+                                if( r == Card.RankID.Ace )
+                                    cards.Add(new Card(s, r, 1));
+                                else if (r == Card.RankID.Two)
+                                    cards.Add(new Card(s, r, 2));
+                                else if (r == Card.RankID.Three)
+                                    cards.Add(new Card(s, r, 3));
+                                else if (r == Card.RankID.Four)
+                                    cards.Add(new Card(s, r, 4));
+                                else if (r == Card.RankID.Five)
+                                    cards.Add(new Card(s, r, 5));
+                                else if (r == Card.RankID.Six)
+                                    cards.Add(new Card(s, r, 6));
+                                else if (r == Card.RankID.Seven)
+                                    cards.Add(new Card(s, r, 7));
+                                else if (r == Card.RankID.Eight)
+                                    cards.Add(new Card(s, r, 8));
+                                else if (r == Card.RankID.Nine)
+                                    cards.Add(new Card(s, r, 9));
+                                else if (r == Card.RankID.Queen || r == Card.RankID.Jack || r == Card.RankID.Ten)
+                                    cards.Add(new Card(s, r, 10));
+                                else if (r == Card.RankID.King)
+                                    cards.Add(new Card(s, r, 0));
+                            }
                         }
                     }
                 }
 
-                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker));
-                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker));
+                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker, -2));
+                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker, -2));
             }
             // shuffle cards
             randomizeCards();

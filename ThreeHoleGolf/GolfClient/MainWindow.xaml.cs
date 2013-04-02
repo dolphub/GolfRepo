@@ -338,6 +338,7 @@ namespace GolfClient
                             btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                             btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
                         }
+
                     }
                     else // someone else did, update the players panel
                     {
