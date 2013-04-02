@@ -32,6 +32,10 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void UpdateGameState(Player[] _players);
 
+        [OperationContract(IsOneWay = true)]
+        void ResetClients();
+
+
 
 
         //void UpdateDiscard(string _discard);
@@ -59,6 +63,16 @@ namespace GolfLibrary
         void GameState();
 
         [OperationContract]
+        void ResetGame();
+
+        [OperationContract]
+        void StartGame();
+
+
+        
+
+        
+        [OperationContract]
         bool Join(string name);
 
         [OperationContract(IsOneWay = true)]
@@ -79,6 +93,7 @@ namespace GolfLibrary
         private int cardIdx;
         private string _drawnCard, _discardCard;
         public List<Player> Players;
+        private bool _gameInProgrees = false;
         
 
         // C'tors
@@ -209,6 +224,17 @@ namespace GolfLibrary
             }
         }
 
+        /// <summary>
+        /// Resets the game to a start point, after points
+        /// calculation
+        /// </summary>
+        public void ResetGame()
+        {
+            this.Shuffle();
+            foreach (IGameCallBack gcb in gameCallBacks.Values)
+                gcb.ResetClients();
+        }
+
         private string formatName(string _raw)
         {
             string refined = _raw;
@@ -229,7 +255,6 @@ namespace GolfLibrary
                     if (cardIdx == cards.Count())
                     {
                         throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
-
                     }
                     else
                     {
@@ -256,6 +281,17 @@ namespace GolfLibrary
         {
             foreach (IGameCallBack gcb in gameCallBacks.Values)
                 gcb.UpdateGameState(Players.ToArray());
+        }
+
+
+        public void StartGame()
+        {
+            if( !this._gameInProgrees )
+                this._gameInProgrees = true;
+
+
+
+
         }
 
 
@@ -350,6 +386,8 @@ namespace GolfLibrary
             }
             get { return _discardCard; }
         }
+
+
 
     } // end class
 }

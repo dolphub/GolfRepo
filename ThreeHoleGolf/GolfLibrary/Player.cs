@@ -25,7 +25,7 @@ namespace GolfLibrary
         {
             this.Name = _name;
             this.isReady = _isReady;
-            this.Points = 120;
+            this.Points = 0;
         }
     }
 }
