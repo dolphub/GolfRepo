@@ -30,9 +30,9 @@ namespace GolfClient
             //this.MouseLeave += (s, e) => {
             //    this.PlayerBorder.BorderBrush = new SolidColorBrush(Colors.Black);
             //};
-            this.PlayerName.Content += _name;
+            this.PlayerName.Content += _name.Replace('_', ' ');
             this.PlayerScore.Content += _score.ToString();
-            this.Name = _name.Replace('_', ' ');
+            this.Name = _name;
         }
 
     }
