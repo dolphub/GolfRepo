@@ -26,6 +26,9 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void PlayerDisconnected(string[] _names);
 
+        [OperationContract(IsOneWay = true)]
+        void UpdateQue(int num);
+
         //void UpdateDiscard(string _discard);
     }
 
@@ -59,7 +62,7 @@ namespace GolfLibrary
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class GameSystem : IGameSystem
     {
-//        // member variables
+        // member variables
         private List<Card> cards = new List<Card>();
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;

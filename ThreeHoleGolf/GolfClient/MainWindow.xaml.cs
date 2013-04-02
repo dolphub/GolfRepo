@@ -280,6 +280,26 @@ namespace GolfClient
                 this.Dispatcher.BeginInvoke(new UpdateDrawnDelegate(UpdateDrawn), new object[] { _drawn });
         }
 
+        private delegate void UpdateQueueDelegate(int number);
+        public void UpdateQue(int num)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                   
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new UpdateQueueDelegate(UpdateQue), new object[] { num });
+        }
+
+
+
         private delegate void UpdateDiscardedDelegate(string discard);
         public void UpdateDiscard(string _discard)
         {
@@ -459,8 +479,23 @@ namespace GolfClient
                 gameSystem.Leave(usrName);
         }
 
+        private void btn_Ready_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (btn_Ready.Content.ToString().Contains("Un"))
+            {
+                btn_Ready.Content = "Ready";
+            }
+            else 
+            {
+                btn_Ready.Content = "Un-Ready";
+            }
+        }
 
-       
+
+
+
+
+
     }
 }
 

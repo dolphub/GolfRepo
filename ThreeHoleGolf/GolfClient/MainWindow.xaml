@@ -51,8 +51,7 @@
                         <Image x:Name="facedrawnCard" Stretch="Fill"  />
                     </Button>
 
-                    <!--<Button x:Name="btn_discardOption" Visibility="Visible" Content="Discard" IsEnabled="False" Height="40" Width="150" Click="btn_Discard_Click_1" Grid.Column="1" Margin="203,193,24,42" Grid.Row="1" />
-                    <Button x:Name="btn_KeepOption" Visibility="Visible" Content="Keep" IsEnabled="False" Height="40" Width="150" Grid.Column="1" Click="btn_Keep_Click_1" Margin="28,193,199,42" Grid.Row="1"/>-->
+                   
 
                 </Grid>
             </Border>
@@ -115,21 +114,17 @@
                         <RowDefinition Height="70*" />
                     </Grid.RowDefinitions>
 
-                    <Label x:Name="lbl_userName" Content="Name: "/>
-                    <Label x:Name="lbl_userPoints" Content="Points: " Grid.Column="1" />
-                    
-<!--<<<<<<< HEAD
-=======-->
+                    <Label x:Name="lbl_userName" Content="Name: " FontFamily="Cooper Black" FontSize="14"/>
+                    <Label x:Name="lbl_userPoints" Content="Points: " Grid.Column="1" FontFamily="Cooper Black" FontSize="14"/>
+
+                    <Label x:Name="GameMessageLbl" Content="Waiting for players..." Grid.Column="0" Grid.Row="1" FontFamily="Cooper Black" FontSize="14"  Height="80" VerticalAlignment="Top" HorizontalAlignment="Center" Width="200"  />
+                    <Button x:Name="btn_Ready" Content="Ready" Margin="0,0,0,5" VerticalAlignment="Bottom" FontFamily="Cooper Black" FontSize="18" Click="btn_Ready_Click_1" Height="60" Width="120" Grid.Row="1" Grid.Column="0" />
+
                     <Button x:Name="btn_help" Click="btn_help_Click" Height="40" Width="40" Grid.Row="1" Grid.Column="1">
                         <Image x:Name="helpIcon" Source="Images/HelpIcon.png" Stretch="Fill"/>
                     </Button>
 
-                    <!--<Button x:Name="btn_blindPile" Content="Select Blind" Height="40" Width="120" Grid.Row="1"/>
-                    <Button x:Name="btn_discardPile" Content="Select Discard" Height="40" Width="120" Grid.Row="1" Grid.Column="1"/>
 
-                    <Button x:Name="btn_keep" Content="Keep Card" Height="40" Width="120" Grid.Row="1" Visibility="Hidden"/>
-                    <Button x:Name="btn_discard" Content="Discard Card" Height="40" Width="120" Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>-->
-<!-->>>>>>> tjbranch-->
                 </Grid>
             </Border>
 

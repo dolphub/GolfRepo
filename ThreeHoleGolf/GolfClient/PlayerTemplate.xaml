@@ -28,8 +28,8 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label x:Name="PlayerName" Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Center" FontWeight="ExtraBold"  HorizontalAlignment="Left" Content="Player: " Margin="0,0,0,10" Grid.RowSpan="2"  />
-                    <Label x:Name="PlayerScore" Grid.Column="2" VerticalAlignment="Center" FontWeight="ExtraBold" HorizontalAlignment="Left" Content="Score: " Margin="0,0,0,10" Grid.RowSpan="2"  />
+                    <Label x:Name="PlayerName" FontFamily="Cooper Black" FontSize="14" Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Center" FontWeight="ExtraBold"  HorizontalAlignment="Left" Content="Player: " Margin="0,0,0,10" Grid.RowSpan="2"  />
+                    <Label x:Name="PlayerScore" FontFamily="Cooper Black" FontSize="14" Grid.Column="2" VerticalAlignment="Center" FontWeight="ExtraBold" HorizontalAlignment="Left" Content="Score: " Margin="0,0,0,10" Grid.RowSpan="2"  />
                 </Grid>
             </Border>
 
