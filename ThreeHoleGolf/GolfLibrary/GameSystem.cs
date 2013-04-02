@@ -68,9 +68,14 @@ namespace GolfLibrary
         [OperationContract]
         void StartGame();
 
+        [OperationContract]
+        int CardValue(string card);
 
-        
+        [OperationContract]
+        void Points(int cardValue, string name);
 
+        [OperationContract]
+        int GetPoints(string name);
         
         [OperationContract]
         bool Join(string name);
@@ -115,9 +120,25 @@ namespace GolfLibrary
         #region GameCallBackSystem
         public bool Join(string name)
         {
+            bool hasAlpha = false;
+            bool hasChars = false;
+            foreach (char ch in name)
+            {
+                if (char.IsLetter(ch))
+                {
+                    hasAlpha = true;
+                    hasChars = true;
+                }
+                else if (char.IsLetterOrDigit(ch))
+                    hasChars = true;
+            }
             // Unique name for the game
             if (gameCallBacks.ContainsKey(name.ToUpper()))
                 return false;
+            else if (!hasAlpha)
+                return false;
+            else if (!hasChars)
+                return false; 
             else
             {
                 // Retrieve a clients callback proxy
@@ -273,6 +294,27 @@ namespace GolfLibrary
             }
         }
 
+        public void Points(int cardValue, string name)
+        {
+            foreach (Player player in Players)
+            {
+                if (player.Name == name.ToUpper())
+                    player.Points += cardValue;
+            }
+        }
+
+        public int GetPoints(string name)
+        {
+            foreach (Player player in Players)
+            {
+                if (player.Name == name.ToUpper())
+                    return player.Points;
+            }
+
+            //Bad value
+            return -10;
+        }
+
         // reorder the cards in the shoe
         public void Shuffle()
         {
@@ -296,6 +338,17 @@ namespace GolfLibrary
 
         }
 
+        public int CardValue(string card)
+        {
+            foreach (Card c in cards)
+            {
+                if (card == c.sName)
+                    return c.Value;
+            }
+
+            //Bad Value
+            return -10;
+        }
 
         // number of cards remaining in the shoe
         public int NumCards

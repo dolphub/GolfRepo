@@ -31,7 +31,7 @@ namespace GolfClient
             //    this.PlayerBorder.BorderBrush = new SolidColorBrush(Colors.Black);
             //};
             this.PlayerName.Content += _name.Replace('_', ' ');
-            this.PlayerScore.Content += _score.ToString();
+            this.PlayerPoints.Content += _score.ToString();
             this.Name = _name;
         }
     }
