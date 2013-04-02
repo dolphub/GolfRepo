@@ -60,7 +60,7 @@ namespace GolfClient
                 while (!(gameSystem.Join(login.tb_username.Text)));
                 // Build the client
                 InitializeComponent();
-
+                
                 // Set variables and objects
                 timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(timer_Tick);
@@ -70,7 +70,7 @@ namespace GolfClient
                 this.userCardGrid.IsEnabled = false;
                 this.userCardGrid.Opacity = .5;
                 this.GameTable.Opacity = .5;
-                lbl_userName.Content += login.tb_username.Text;
+                lbl_userName.Content += this.formatName(login.tb_username.Text);
                 usrName = formatName(login.tb_username.Text);
                 this.Title = usrName;
             }
@@ -93,14 +93,14 @@ namespace GolfClient
             foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
                 (pt.FindName("ReadyImage") as Image).Visibility = System.Windows.Visibility.Visible;
 
-            this.GameMessageLbl.Content = "Game has started!";
+            Message("Game has started!");
                 
 
         }
         private void timer_Tick(object sender, EventArgs e)
         {
             
-            this.GameMessageLbl.Content = "All Players Ready! Game will start in " + timerCounter + "...";
+            Message("All players ready! Game will start in " + timerCounter + "...");
             timerCounter -= 1;
             if (timerCounter < 0)
             {
@@ -109,6 +109,12 @@ namespace GolfClient
             }
             
         }
+
+        private void Message(string msg)
+        {
+            this.GameMessageLbl.Content = msg;
+        }
+
 
         private void DrawThreeCards()
         {
@@ -322,33 +328,43 @@ namespace GolfClient
                 this.Dispatcher.BeginInvoke(new UpdateDrawnDelegate(UpdateDrawn), new object[] { _drawn });
         }
 
-        private delegate void UpdateQueueDelegate(string username, bool isReady, bool gameStart);
-        public void UpdateQueue(string username, bool isReady, bool gameStart)
+        private delegate void UpdateQueueDelegate(string username, bool isReady, bool gameStart, bool hasEnoughPlayers);
+        public void UpdateQueue(string username, bool isReady, bool gameStart, bool hasEnoughPlayers)
         {
             if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
             {
                 try
                 {
-                    timerCounter = 5;
-                    if (formatName(username) != this.usrName)
-                    {
-                        foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
-                        {
-                            if (pt.Name.Replace('_', ' ') == username)
-                            {
-                                (pt.FindName("ReadyImage") as Image).Visibility = isReady ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-                                break;
-                            }
-                        }
-                    }
-                    if (gameStart)
-                        timer.Start();
+                    if (!hasEnoughPlayers && isReady)
+                        Message("Not enough players!");
+                    else if( !hasEnoughPlayers && !isReady) 
+                        Message("Waiting for players...");
                     else
                     {
-                        timer.Stop();
-                        this.GameMessageLbl.Content = "Waiting for players...";
+                        timerCounter = 5;
+                        if (formatName(username) != this.usrName)
+                        {
+                            foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
+                            {
+                                if (pt.Name.Replace('_', ' ') == username)
+                                {
+                                    (pt.FindName("ReadyImage") as Image).Visibility = isReady ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+                                    (pt.FindName("NotReadyImage") as Image).Visibility = isReady ? System.Windows.Visibility.Hidden : System.Windows.Visibility.Visible;
+                                    break;
+                                }
+                            }
+                        }
+                        if (gameStart)
+                        {
+                            timer.Start();
+                            Message("All players ready! Game will start in 6...");
+                        }
+                        else
+                        {
+                            timer.Stop();
+                            Message("Waiting for players...");
+                        }
                     }
-                    
 
                 }
                 catch (Exception ex)
@@ -357,7 +373,7 @@ namespace GolfClient
                 }
             }
             else
-                this.Dispatcher.BeginInvoke(new UpdateQueueDelegate(UpdateQueue), new object[] { username, isReady, gameStart });
+                this.Dispatcher.BeginInvoke(new UpdateQueueDelegate(UpdateQueue), new object[] { username, isReady, gameStart, hasEnoughPlayers });
         }
 
 
@@ -457,10 +473,8 @@ namespace GolfClient
                                     break;
                                 }
                             }
-
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -486,6 +500,8 @@ namespace GolfClient
                         PlayerTemplate pt = new PlayerTemplate(formatName(_names[i]).Replace(' ','_'), 0);
                         this.PlayerGrid.Children.Add(pt);
                     }
+                    gameSystem.GameState();
+                    Message("Waiting for players...");
                 }
                 catch (Exception ex)
                 {
@@ -526,6 +542,47 @@ namespace GolfClient
                 this.Dispatcher.BeginInvoke(new PlayerDisconnectedDelegate(PlayerDisconnected), new object[] { _names });
         }
 
+        private delegate void UpdateGameStateDelegate(Player[] _players);
+        public void UpdateGameState(Player[] _players)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    for (int i = 0; i < _players.Count() -1; ++i)
+                    {
+                        if (formatName(_players[i].Name).Equals(usrName))
+                            continue;
+
+                        foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
+                        {
+                            if (pt.Name.Replace('_', ' ') == formatName(_players[i].Name))
+                            {
+                                (pt.FindName("PlayerName") as Label).Content = "Player: " + _players[i].Name;
+                                (pt.FindName("PlayerScore") as Label).Content = "Score: " + _players[i].Points;
+
+                                (pt.FindName("ReadyImage") as Image).Visibility = _players[i].isReady ? 
+                                    System.Windows.Visibility.Visible : 
+                                    System.Windows.Visibility.Hidden;
+
+                                (pt.FindName("NotReadyImage") as Image).Visibility = _players[i].isReady ? 
+                                    System.Windows.Visibility.Hidden : 
+                                    System.Windows.Visibility.Visible;
+                            }
+                        }
+
+                        
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new UpdateGameStateDelegate(UpdateGameState), new object[] { _players });
+        }
+
 
 
         public void UpdateGui(CallBackInfo info)
@@ -554,6 +611,9 @@ namespace GolfClient
                 gameSystem.UpdateQueue(this.usrName, true);
             }
         }
+
+
+
 
 
 
