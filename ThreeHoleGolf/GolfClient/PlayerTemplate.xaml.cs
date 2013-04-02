@@ -34,6 +34,5 @@ namespace GolfClient
             this.PlayerScore.Content += _score.ToString();
             this.Name = _name;
         }
-
     }
 }
