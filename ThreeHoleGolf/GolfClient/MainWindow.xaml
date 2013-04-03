@@ -3,10 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="800" Width="1000" ResizeMode="NoResize" Closing="Window_Closing">
 
-    
-    <Border BorderBrush="Black" BorderThickness="3" >
-       
-        <Grid RenderTransformOrigin="0.5,0.5">
+    <Border BorderBrush="Black" BorderThickness="3"  >
+        <Grid RenderTransformOrigin="0.5,0.5" x:Name="GameGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="55*"/>
                 <ColumnDefinition Width="45*"/>
@@ -79,7 +77,7 @@
 
                     <!--Templated Button Version 2.0-->
                     <!--Player Card 1-->
-                    <Button x:Name="btn_card1"  Height="150" Width="100" Grid.Column="0" Drop="btn_discardDeck_DropBottomCards" AllowDrop="True" >
+                    <Button x:Name="btn_card1"  Height="150" Width="100" Grid.Column="0" Drop="btn_discardDeck_DropBottomCards" AllowDrop="True" Visibility="Hidden" >
                         <Grid Width="100" Margin="-5">
                             <Image x:Name="back1" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face1" Stretch="Fill" Visibility="Hidden" />
@@ -87,7 +85,7 @@
                     </Button>
 
                     <!--Player Card 2-->
-                    <Button x:Name="btn_card2"  Height="150" Width="100" Grid.Column="1" Drop="btn_discardDeck_DropBottomCards" AllowDrop="True" >
+                    <Button x:Name="btn_card2"  Height="150" Width="100" Grid.Column="1" Drop="btn_discardDeck_DropBottomCards" AllowDrop="True" Visibility="Hidden" >
                         <Grid Width="100" Margin="-5">
                             <Image x:Name="back2" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face2" Stretch="Fill" Visibility="Hidden" />
@@ -95,7 +93,7 @@
                     </Button>
 
                     <!--Player Card 3-->
-                    <Button x:Name="btn_card3"  Height="150" Width="100" Grid.Column="2" AllowDrop="True" Drop="btn_discardDeck_DropBottomCards" >
+                    <Button x:Name="btn_card3"  Height="150" Width="100" Grid.Column="2" AllowDrop="True" Drop="btn_discardDeck_DropBottomCards" Visibility="Hidden" >
                         <Grid Width="100" Margin="-5">
                             <Image x:Name="back3" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face3" Stretch="Fill" Visibility="Hidden" />
@@ -126,9 +124,6 @@
                         <Image x:Name="helpIcon" Source="Images/HelpIcon.png" Stretch="Fill"/>
                     </Button>
                     
-                    <!--<Button x:Name="EndGame" Content="End Game" Grid.Row="1" VerticalAlignment="Bottom" 
-                            Click="EndGame_Click_1"/>-->
-
 
                 </Grid>
             </Border>

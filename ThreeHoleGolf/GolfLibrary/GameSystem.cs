@@ -38,12 +38,15 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void NextTurn(Player[] _players);
 
-        //[OperationContract(IsOneWay = true)]
-        //void LoadResults(string[] names, int[] points);
 
+        [OperationContract(IsOneWay = true)]
+        void SendWaitQueueFreeze();
 
+        [OperationContract(IsOneWay = true)]
+        void SendMessage(string msg);
 
-        //void UpdateDiscard(string _discard);
+        [OperationContract(IsOneWay = true)]
+        void GameEnding();
     }
 
     [ServiceContract(CallbackContract = typeof(IGameCallBack))]
@@ -82,7 +85,7 @@ namespace GolfLibrary
 
         [OperationContract]
         int GetPoints(string name);
-        
+
 
         [OperationContract(IsOneWay = true)]
         void UpdateTurn();
@@ -93,16 +96,11 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void Leave(string name);
 
-        //Get rid of this a'sldAS":ldas'd;las';dlasd\sald
-        //saldas
-        //    las
-        //asdoiasjd;oisajpaodijasoijaspoiasj
-        //[OperationContract(IsOneWay = true)]
-        //void ShowResults();
-
         int NumCards { [OperationContract] get; }
         int NumDecks { [OperationContract] get; [OperationContract] set; }
         string DiscardedCard { [OperationContract]get; [OperationContract]set; }
+        bool GameInProgress { [OperationContract] get; [OperationContract]  set; }
+        bool LastRound { [OperationContract] get; [OperationContract] set; }
     }
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
@@ -111,13 +109,14 @@ namespace GolfLibrary
         // member variables
         private List<Card> cards = new List<Card>();
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
+        private Dictionary<string, IGameCallBack> gameWaitQueue = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;
         private int cardIdx, playerCount = 0;
         private string _drawnCard, _discardCard;
         public List<Player> Players;
         private bool _gameInProgrees = false;
-        private int _currentTurnPosition = 0;
-        //private int _lastPlayersTurn = -1;
+        private bool _lastRound = false;
+        private int _currentTurnPosition = 0, _lastRoundStoppingPoint;
 
 
         // C'tors
@@ -163,20 +162,27 @@ namespace GolfLibrary
                 return false;
             else
             {
+
                 // Retrieve a clients callback proxy
                 IGameCallBack gcb = OperationContext.Current.GetCallbackChannel<IGameCallBack>();
 
-                gameCallBacks.Add(name.ToUpper(), gcb);
-                Players.Add(new Player(name.ToUpper(), false));
-                Console.WriteLine(name + " has connected.");
-
-                if (gameCallBacks.Count > 1)
+                if (this.GameInProgress)
                 {
-                    foreach (IGameCallBack cb in gameCallBacks.Values)
-                        cb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
+                    gameWaitQueue.Add(name.ToUpper(), gcb);
+                    gcb.SendWaitQueueFreeze();
                 }
+                else
+                {
+                    gameCallBacks.Add(name.ToUpper(), gcb);
+                    Players.Add(new Player(name.ToUpper(), false));
+                    Console.WriteLine(name + " has connected.");
 
-                //this._gameQueue++;
+                    if (gameCallBacks.Count > 1)
+                    {
+                        foreach (IGameCallBack cb in gameCallBacks.Values)
+                            cb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
+                    }
+                }
                 return true;
             }
         }
@@ -196,6 +202,9 @@ namespace GolfLibrary
                     foreach (IGameCallBack cb in gameCallBacks.Values)
                         cb.PlayerDisconnected(gameCallBacks.Keys.ToArray());
                 }
+                
+                this._gameInProgrees = false;
+                ResetGame();
             }
         }
 
@@ -291,8 +300,25 @@ namespace GolfLibrary
         public void ResetGame()
         {
             this.Shuffle();
+            Players.All(p => { p.isReady = false; p.Points = 0; return true; });
             foreach (IGameCallBack gcb in gameCallBacks.Values)
                 gcb.ResetClients();
+
+
+
+            if (gameWaitQueue.Count > 0)
+            {
+                foreach (string x in gameWaitQueue.Keys)
+                {
+                    gameCallBacks.Add(x, gameWaitQueue[x]);
+                    Players.Add(new Player(x, false));
+
+                }
+                gameWaitQueue.Clear();
+
+                foreach (IGameCallBack gcb in gameCallBacks.Values)
+                    gcb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
+            }
         }
 
         private string formatName(string _raw)
@@ -369,33 +395,48 @@ namespace GolfLibrary
             if (DateTime.Now - _lastUpdate > TimeSpan.FromSeconds(1))
             {
                 if (this._currentTurnPosition >= Players.Count())
+                {
                     this._currentTurnPosition = 0;
+                }
 
-                Players.All(p => { p.myTurn = false; return true; });
-                Console.WriteLine(Players[_currentTurnPosition].Name + "'s Turn.");
-                Players[_currentTurnPosition++].myTurn = true;
 
-                foreach (IGameCallBack gcb in gameCallBacks.Values)
-                    gcb.NextTurn(Players.ToArray());
 
-                _lastUpdate = DateTime.Now;
+                if (GameInProgress)
+                {
+                    Players.All(p => { p.myTurn = false; return true; });
+                    Console.WriteLine(Players[_currentTurnPosition].Name + "'s Turn.");
+                    Players[_currentTurnPosition++].myTurn = true;
+
+                    foreach (IGameCallBack gcb in gameCallBacks.Values)
+                    {
+                        gcb.NextTurn(Players.ToArray());
+                        if (LastRound)
+                            gcb.SendMessage("Last Turn!!");
+                    }
+
+
+                    if (LastRound)
+                        if (_currentTurnPosition == _lastRoundStoppingPoint)
+                            GameInProgress = false;
+
+                    _lastUpdate = DateTime.Now;
+                }
             }
 
-            
+
 
         }
 
         public void StartGame()
         {
             ++playerCount;
-            if( this.playerCount == Players.Count )
+            if (this.playerCount == Players.Count)
             {
-                if (!this._gameInProgrees)
+                if (!GameInProgress)
                 {
-                    this._gameInProgrees = true;
-                    UpdateTurn();
+                    this.GameInProgress = true;
                 }
-            }            
+            }
         }
 
         public int CardValue(string card)
@@ -452,7 +493,7 @@ namespace GolfLibrary
                             if (!(r == Card.RankID.Joker))
                             {
                                 // add card
-                                if( r == Card.RankID.Ace )
+                                if (r == Card.RankID.Ace)
                                     cards.Add(new Card(s, r, 1));
                                 else if (r == Card.RankID.Two)
                                     cards.Add(new Card(s, r, 2));
@@ -526,9 +567,45 @@ namespace GolfLibrary
             get { return _discardCard; }
         }
 
+        public bool GameInProgress
+        {
+            get
+            {
+                return _gameInProgrees;
+            }
+            set
+            {
+                _gameInProgrees = value;
+                // If value is set to true, update the turn and set the
+                // game in motion
+                if (value)
+                {
+                    UpdateTurn();
+                }
+                else // else if the bool is false, we send final scores, and reset game
+                {
+                    foreach (IGameCallBack gcb in gameCallBacks.Values)
+                        gcb.GameEnding();
+                    System.Threading.Thread.Sleep(5000);
+                    ResetGame();
+                }
+            }
+        }
 
 
-
+        public bool LastRound
+        {
+            get
+            {
+                return this._lastRound;
+            }
+            set
+            {
+                _lastRound = value;
+                if (_lastRound)
+                    _lastRoundStoppingPoint = _currentTurnPosition;
+            }
+        }
 
     } // end class
 }
