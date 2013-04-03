@@ -58,7 +58,7 @@
 
 
             <Border BorderBrush="Black" BorderThickness="2" Grid.Column="1">
-                <ScrollViewer VerticalScrollBarVisibility="Visible" >
+                <ScrollViewer VerticalScrollBarVisibility="Visible" x:Name="scrollViewer" >
                     <Grid Grid.Column="1">
                         <StackPanel x:Name="PlayerGrid" VerticalAlignment="Top" Orientation="Vertical">
                         </StackPanel>
