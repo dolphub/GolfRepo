@@ -52,7 +52,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(217, 17);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Username ( Max 24 Characters ):";
+            this.label1.Text = "Username ( Max 18 Characters ):";
             // 
             // tb_username
             // 
@@ -62,7 +62,7 @@
             this.tb_username.HideSelection = false;
             this.tb_username.ImeMode = System.Windows.Forms.ImeMode.On;
             this.tb_username.Location = new System.Drawing.Point(26, 57);
-            this.tb_username.MaxLength = 24;
+            this.tb_username.MaxLength = 18;
             this.tb_username.Name = "tb_username";
             this.tb_username.Size = new System.Drawing.Size(228, 23);
             this.tb_username.TabIndex = 2;

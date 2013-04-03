@@ -14,6 +14,7 @@ namespace GolfLibrary
         string Name { get; }
         string sName { get; }
         Uri Card_uri { set; }
+        int Value { get; }
     }
 
     public class Card : ICard
@@ -32,6 +33,7 @@ namespace GolfLibrary
         };
 
         // member variables and accessor methods
+        public int Value { get; private set; }
         public SuitID Suit { get; private set; }
         public RankID Rank { get; private set; }
         public string Name
@@ -51,10 +53,11 @@ namespace GolfLibrary
         }
 
         // c'tor which identifies which card this is
-        public Card(SuitID s, RankID r)
+        public Card(SuitID s, RankID r, int v)
         {
             Suit = s;
             Rank = r;
+            Value = v;
         }
 
         private Uri _card_uri;

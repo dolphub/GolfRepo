@@ -35,6 +35,8 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void ResetClients();
 
+        [OperationContract(IsOneWay = true)]
+        void NextTurn(Player[] _players);
 
 
 
@@ -68,13 +70,20 @@ namespace GolfLibrary
         [OperationContract]
         void StartGame();
 
+
         [OperationContract]
+        int CardValue(string card);
+
+        [OperationContract]
+        void Points(int cardValue, string name);
+
+        [OperationContract]
+        int GetPoints(string name);
+        
+
+        [OperationContract(IsOneWay = true)]
         void UpdateTurn();
 
-
-        
-
-        
         [OperationContract]
         bool Join(string name);
 
@@ -93,13 +102,13 @@ namespace GolfLibrary
         private List<Card> cards = new List<Card>();
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;
-        private int cardIdx;
+        private int cardIdx, playerCount = 0;
         private string _drawnCard, _discardCard;
         public List<Player> Players;
         private bool _gameInProgrees = false;
         private int _currentTurnPosition = 0;
         //private int _lastPlayersTurn = -1;
-        
+
 
         // C'tors
         public GameSystem()
@@ -120,9 +129,25 @@ namespace GolfLibrary
         #region GameCallBackSystem
         public bool Join(string name)
         {
+            bool hasAlpha = false;
+            bool hasChars = false;
+            foreach (char ch in name)
+            {
+                if (char.IsLetter(ch))
+                {
+                    hasAlpha = true;
+                    hasChars = true;
+                }
+                else if (char.IsLetterOrDigit(ch))
+                    hasChars = true;
+            }
             // Unique name for the game
             if (gameCallBacks.ContainsKey(name.ToUpper()))
                 return false;
+            else if (!hasAlpha)
+                return false;
+            else if (!hasChars)
+                return false; 
             else
             {
                 // Retrieve a clients callback proxy
@@ -170,7 +195,8 @@ namespace GolfLibrary
             if (Players.Count > 1)
                 hasEnoughPlayers = true;
 
-            Players.All(p => {
+            Players.All(p =>
+            {
                 if (p.Name == username.ToUpper())
                     p.isReady = isReady;
                 if (!p.isReady)
@@ -189,12 +215,13 @@ namespace GolfLibrary
         {
             foreach (IGameCallBack gcb in gameCallBacks.Values)
                 gcb.UpdateContestantCard(userName, newCard, oldCard, fromDiscard, btnName, objectName);
-            
         }
 
         private void updateAllUsers()
         {
         }
+
+
 
         #endregion
 
@@ -247,7 +274,7 @@ namespace GolfLibrary
             if (_raw.Length > 1)
                 return _raw[0].ToString().ToUpper() + _raw.Substring(1, _raw.Length - 1).ToLower();
             else
-                return _raw;  
+                return _raw;
         }
 
         public List<string> DrawThreeCards()
@@ -277,6 +304,27 @@ namespace GolfLibrary
             }
         }
 
+        public void Points(int cardValue, string name)
+        {
+            foreach (Player player in Players)
+            {
+                if (player.Name == name.ToUpper())
+                    player.Points += cardValue;
+            }
+        }
+
+        public int GetPoints(string name)
+        {
+            foreach (Player player in Players)
+            {
+                if (player.Name == name.ToUpper())
+                    return player.Points;
+            }
+
+            //Bad value
+            return -10;
+        }
+
         // reorder the cards in the shoe
         public void Shuffle()
         {
@@ -289,29 +337,52 @@ namespace GolfLibrary
                 gcb.UpdateGameState(Players.ToArray());
         }
 
-
+        private DateTime _lastUpdate = DateTime.Now;
         public void UpdateTurn()
         {
-            if (this._currentTurnPosition >= Players.Count())
+            if (DateTime.Now - _lastUpdate > TimeSpan.FromSeconds(1))
             {
-                //this._lastPlayersTurn = _currentTurnPosition;
-                this._currentTurnPosition = 0;
+                if (this._currentTurnPosition >= Players.Count())
+                    this._currentTurnPosition = 0;
+
+                Players.All(p => { p.myTurn = false; return true; });
+                Console.WriteLine(Players[_currentTurnPosition].Name + "'s Turn.");
+                Players[_currentTurnPosition++].myTurn = true;
+
+                foreach (IGameCallBack gcb in gameCallBacks.Values)
+                    gcb.NextTurn(Players.ToArray());
+
+                _lastUpdate = DateTime.Now;
             }
 
-            Players.All(p => { p.myTurn = false; return true; });
-            Players[_currentTurnPosition++].myTurn = true;
-            GameState();
+            
+
         }
 
         public void StartGame()
         {
-            if (!this._gameInProgrees)
+            ++playerCount;
+            if( this.playerCount == Players.Count )
             {
-                this._gameInProgrees = true;
-                UpdateTurn();
-            }
+                if (!this._gameInProgrees)
+                {
+                    this._gameInProgrees = true;
+                    UpdateTurn();
+                }
+            }            
         }
 
+        public int CardValue(string card)
+        {
+            foreach (Card c in cards)
+            {
+                if (card == c.sName)
+                    return c.Value;
+            }
+
+            //Bad Value
+            return -10;
+        }
 
         // number of cards remaining in the shoe
         public int NumCards
@@ -353,14 +424,37 @@ namespace GolfLibrary
                         foreach (Card.RankID r in Enum.GetValues(typeof(Card.RankID)))
                         {
                             if (!(r == Card.RankID.Joker))
+                            {
                                 // add card
-                                cards.Add(new Card(s, r));
+                                if( r == Card.RankID.Ace )
+                                    cards.Add(new Card(s, r, 1));
+                                else if (r == Card.RankID.Two)
+                                    cards.Add(new Card(s, r, 2));
+                                else if (r == Card.RankID.Three)
+                                    cards.Add(new Card(s, r, 3));
+                                else if (r == Card.RankID.Four)
+                                    cards.Add(new Card(s, r, 4));
+                                else if (r == Card.RankID.Five)
+                                    cards.Add(new Card(s, r, 5));
+                                else if (r == Card.RankID.Six)
+                                    cards.Add(new Card(s, r, 6));
+                                else if (r == Card.RankID.Seven)
+                                    cards.Add(new Card(s, r, 7));
+                                else if (r == Card.RankID.Eight)
+                                    cards.Add(new Card(s, r, 8));
+                                else if (r == Card.RankID.Nine)
+                                    cards.Add(new Card(s, r, 9));
+                                else if (r == Card.RankID.Queen || r == Card.RankID.Jack || r == Card.RankID.Ten)
+                                    cards.Add(new Card(s, r, 10));
+                                else if (r == Card.RankID.King)
+                                    cards.Add(new Card(s, r, 0));
+                            }
                         }
                     }
                 }
 
-                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker));
-                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker));
+                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker, -2));
+                cards.Add(new Card(Card.SuitID.Black, Card.RankID.Joker, -2));
             }
             // shuffle cards
             randomizeCards();
@@ -396,12 +490,12 @@ namespace GolfLibrary
         // Game Wide set the discarded card
         public string DiscardedCard
         {
-            set {
+            set
+            {
                 _discardCard = value;
 
                 foreach (IGameCallBack gcb in gameCallBacks.Values)
                     gcb.UpdateDiscard(_discardCard);
-                
             }
             get { return _discardCard; }
         }
