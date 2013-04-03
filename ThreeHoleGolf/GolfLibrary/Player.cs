@@ -20,12 +20,15 @@ namespace GolfLibrary
         public int Points { get; set; }
         
         public bool isReady { get; set; }
+
+        public bool myTurn { get; set; }
         
         public Player(string _name, bool _isReady)
         {
             this.Name = _name;
             this.isReady = _isReady;
             this.Points = 0;
+            myTurn = false;
         }
     }
 }

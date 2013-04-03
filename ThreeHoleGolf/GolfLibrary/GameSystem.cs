@@ -35,6 +35,8 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void ResetClients();
 
+        [OperationContract(IsOneWay = true)]
+        void NextTurn(Player[] _players);
 
 
 
@@ -68,6 +70,7 @@ namespace GolfLibrary
         [OperationContract]
         void StartGame();
 
+
         [OperationContract]
         int CardValue(string card);
 
@@ -77,6 +80,10 @@ namespace GolfLibrary
         [OperationContract]
         int GetPoints(string name);
         
+
+        [OperationContract(IsOneWay = true)]
+        void UpdateTurn();
+
         [OperationContract]
         bool Join(string name);
 
@@ -95,11 +102,13 @@ namespace GolfLibrary
         private List<Card> cards = new List<Card>();
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;
-        private int cardIdx;
+        private int cardIdx, playerCount = 0;
         private string _drawnCard, _discardCard;
         public List<Player> Players;
         private bool _gameInProgrees = false;
-        
+        private int _currentTurnPosition = 0;
+        //private int _lastPlayersTurn = -1;
+
 
         // C'tors
         public GameSystem()
@@ -186,7 +195,8 @@ namespace GolfLibrary
             if (Players.Count > 1)
                 hasEnoughPlayers = true;
 
-            Players.All(p => {
+            Players.All(p =>
+            {
                 if (p.Name == username.ToUpper())
                     p.isReady = isReady;
                 if (!p.isReady)
@@ -264,7 +274,7 @@ namespace GolfLibrary
             if (_raw.Length > 1)
                 return _raw[0].ToString().ToUpper() + _raw.Substring(1, _raw.Length - 1).ToLower();
             else
-                return _raw;  
+                return _raw;
         }
 
         public List<string> DrawThreeCards()
@@ -327,15 +337,39 @@ namespace GolfLibrary
                 gcb.UpdateGameState(Players.ToArray());
         }
 
+        private DateTime _lastUpdate = DateTime.Now;
+        public void UpdateTurn()
+        {
+            if (DateTime.Now - _lastUpdate > TimeSpan.FromSeconds(1))
+            {
+                if (this._currentTurnPosition >= Players.Count())
+                    this._currentTurnPosition = 0;
+
+                Players.All(p => { p.myTurn = false; return true; });
+                Console.WriteLine(Players[_currentTurnPosition].Name + "'s Turn.");
+                Players[_currentTurnPosition++].myTurn = true;
+
+                foreach (IGameCallBack gcb in gameCallBacks.Values)
+                    gcb.NextTurn(Players.ToArray());
+
+                _lastUpdate = DateTime.Now;
+            }
+
+            
+
+        }
 
         public void StartGame()
         {
-            if( !this._gameInProgrees )
-                this._gameInProgrees = true;
-
-
-
-
+            ++playerCount;
+            if( this.playerCount == Players.Count )
+            {
+                if (!this._gameInProgrees)
+                {
+                    this._gameInProgrees = true;
+                    UpdateTurn();
+                }
+            }            
         }
 
         public int CardValue(string card)
@@ -456,7 +490,8 @@ namespace GolfLibrary
         // Game Wide set the discarded card
         public string DiscardedCard
         {
-            set {
+            set
+            {
                 _discardCard = value;
 
                 foreach (IGameCallBack gcb in gameCallBacks.Values)
@@ -464,6 +499,8 @@ namespace GolfLibrary
             }
             get { return _discardCard; }
         }
+
+
 
 
 
