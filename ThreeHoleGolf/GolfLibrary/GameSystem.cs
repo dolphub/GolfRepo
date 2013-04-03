@@ -35,6 +35,8 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void ResetClients();
 
+        [OperationContract(IsOneWay = true)]
+        void NextTurn(Player[] _players);
 
 
 
