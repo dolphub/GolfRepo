@@ -89,18 +89,12 @@ namespace GolfClient
             this.GameTable.Opacity = 1.0;
             this.userCardGrid.IsEnabled = true;
             this.userCardGrid.Opacity = 1.0;
-            this.btn_blindDeck.IsEnabled = false;
 
             foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
                 (pt.FindName("ReadyImage") as Image).Visibility = System.Windows.Visibility.Visible;
 
-            btn_blindDeck_dummy.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-            btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-            btn_drawnCard.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
 
             gameSystem.StartGame();
-            Message("Game has started!");
-
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -197,7 +191,7 @@ namespace GolfClient
                 string[] temp = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
                 gameSystem.DiscardedCard = temp[temp.Length - 1];
 
-                gameSystem.UpdateTurn();
+                
             }
         }
 
@@ -257,7 +251,7 @@ namespace GolfClient
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName);
             }
 
-            gameSystem.UpdateTurn();
+            
 
         }
 
@@ -601,41 +595,45 @@ namespace GolfClient
             {
                 try
                 {
-                    string currentPlayer = null;
-                    _players.All(p =>
-                    {
+
+                    Player currentPlayer = null;
+                    _players.All(p => {
                         if (p.myTurn)
-                            currentPlayer = p.Name;
+                        {
+                            currentPlayer = p;
+                            return true;
+                        }
+                        
                         return true;
                     });
 
-
-
-                    for (int i = 0; i < _players.Count(); ++i)
+                    if (formatName(currentPlayer.Name) == this.usrName)
                     {
-                        if (formatName(_players[i].Name).Equals(usrName))
-                        {
-                            if (currentPlayer != null)
-                            {
-                                if (_players[i].myTurn)
-                                {
-                                    btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-                                    btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-                                    btn_drawnCard.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-                                    btn_blindDeck.IsEnabled = true;
-                                    Message("It's your turn!");
-                                }
-                                else
-                                {
-                                    btn_blindDeck_dummy.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-                                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-                                    btn_drawnCard.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-                                    btn_blindDeck.IsEnabled = false;
-                                    Message(formatName(currentPlayer.ToString()) + "'s Turn!");
-                                }
-                            }
-                        }
+                        btn_blindDeck.IsEnabled = true;
+                        btn_discardDeck.IsEnabled = true;
+                        btn_drawnCard.IsEnabled = true;
+
+                        //btn_blindDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                        btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                        btn_drawnCard.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+
+                        Message("It's your turn!");
                     }
+                    else
+                    {
+                        //btn_blindDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                        btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                        btn_drawnCard.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+
+                        
+
+                        btn_blindDeck.IsEnabled = false;
+                        btn_discardDeck.IsEnabled = false;
+                        btn_drawnCard.IsEnabled = false;
+
+                        Message(formatName(currentPlayer.Name) + "'s Turn!");
+                    }
+                    
                 }
                 catch (Exception ex)
                 {

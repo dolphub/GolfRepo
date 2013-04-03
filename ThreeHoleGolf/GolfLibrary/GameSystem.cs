@@ -301,6 +301,9 @@ namespace GolfLibrary
             }
 
             Players.All(p => { p.myTurn = false; return true; });
+
+            Console.WriteLine(Players[_currentTurnPosition].Name + "'s Turn.");
+
             Players[_currentTurnPosition++].myTurn = true;
 
             foreach (IGameCallBack gcb in gameCallBacks.Values)
