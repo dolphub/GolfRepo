@@ -68,6 +68,9 @@ namespace GolfLibrary
         [OperationContract]
         void StartGame();
 
+        [OperationContract]
+        void UpdateTurn();
+
 
         
 
@@ -94,6 +97,8 @@ namespace GolfLibrary
         private string _drawnCard, _discardCard;
         public List<Player> Players;
         private bool _gameInProgrees = false;
+        private int _currentTurnPosition = 0;
+        //private int _lastPlayersTurn = -1;
         
 
         // C'tors
@@ -184,6 +189,7 @@ namespace GolfLibrary
         {
             foreach (IGameCallBack gcb in gameCallBacks.Values)
                 gcb.UpdateContestantCard(userName, newCard, oldCard, fromDiscard, btnName, objectName);
+            
         }
 
         private void updateAllUsers()
@@ -284,14 +290,26 @@ namespace GolfLibrary
         }
 
 
+        public void UpdateTurn()
+        {
+            if (this._currentTurnPosition >= Players.Count())
+            {
+                //this._lastPlayersTurn = _currentTurnPosition;
+                this._currentTurnPosition = 0;
+            }
+
+            Players.All(p => { p.myTurn = false; return true; });
+            Players[_currentTurnPosition++].myTurn = true;
+            GameState();
+        }
+
         public void StartGame()
         {
-            if( !this._gameInProgrees )
+            if (!this._gameInProgrees)
+            {
                 this._gameInProgrees = true;
-
-
-
-
+                UpdateTurn();
+            }
         }
 
 
@@ -383,9 +401,12 @@ namespace GolfLibrary
 
                 foreach (IGameCallBack gcb in gameCallBacks.Values)
                     gcb.UpdateDiscard(_discardCard);
+                
             }
             get { return _discardCard; }
         }
+
+
 
 
 

@@ -89,10 +89,16 @@ namespace GolfClient
             this.GameTable.Opacity = 1.0;
             this.userCardGrid.IsEnabled = true;
             this.userCardGrid.Opacity = 1.0;
+            this.btn_blindDeck.IsEnabled = false;
 
             foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
                 (pt.FindName("ReadyImage") as Image).Visibility = System.Windows.Visibility.Visible;
 
+            btn_blindDeck_dummy.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+            btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+            btn_drawnCard.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+
+            gameSystem.StartGame();
             Message("Game has started!");
 
         }
@@ -134,20 +140,20 @@ namespace GolfClient
         }
 
         // Swapping and Showing Cards
-        public void SwapImage(bool _showface, FrameworkElement btn, string _identity, string newcard)
-        {
-            (btn.FindName("face" + _identity) as Image).Source = new BitmapImage(new Uri(newcard, UriKind.RelativeOrAbsolute));
-            if (_showface) // Showing Face Card
-            {
-                (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
-                (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
-            }
-            else // Showing Back Card
-            {
-                (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
-                (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
-            }
-        }
+        //public void SwapImage(bool _showface, FrameworkElement btn, string _identity, string newcard)
+        //{
+        //    (btn.FindName("face" + _identity) as Image).Source = new BitmapImage(new Uri(newcard, UriKind.RelativeOrAbsolute));
+        //    if (_showface) // Showing Face Card
+        //    {
+        //        (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
+        //        (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
+        //    }
+        //    else // Showing Back Card
+        //    {
+        //        (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
+        //        (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
+        //    }
+        //}
 
         //public void SwapRawImage(FrameworkElement btn, string id, string card)
         //{
@@ -190,6 +196,8 @@ namespace GolfClient
                 btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                 string[] temp = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
                 gameSystem.DiscardedCard = temp[temp.Length-1];
+
+                gameSystem.UpdateTurn();
             }
         }
 
@@ -248,6 +256,8 @@ namespace GolfClient
 
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName);
             }
+
+            gameSystem.UpdateTurn();
 
         }
 
@@ -317,7 +327,7 @@ namespace GolfClient
                     btn_drawnCard.Visibility = Visibility.Visible;
                     (btn_drawnCard.FindName("facedrawnCard") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + _drawn + ".jpg", UriKind.RelativeOrAbsolute));
 
-                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                    //btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
                 }
                 catch (Exception ex)
                 {
@@ -392,7 +402,7 @@ namespace GolfClient
 
                     (btn_discardDeck.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
                     (btn_discardDeck.FindName("img_discardDeck") as Image).Visibility = System.Windows.Visibility.Hidden;
-                    btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                    //btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                 }
                 catch (Exception ex)
                 {
@@ -420,7 +430,7 @@ namespace GolfClient
                             Button droppedToBtn = userCardGrid.FindName(btnName) as Button;
                             (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
                             (droppedToBtn.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
-                            btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            //btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                         }
                         else
                         {
@@ -432,8 +442,8 @@ namespace GolfClient
                             (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
                             (droppedToBtn.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
 
-                            btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-                            btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            //btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            //btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                             btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
                         }
                     }
@@ -453,15 +463,15 @@ namespace GolfClient
                                     break;
                                 }
                             }
-                            btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            //btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
 
                         }
                         else
                         {
                             (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + oldCard + ".jpg", UriKind.RelativeOrAbsolute));
                             (btn_discardDeck.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
-                            btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-                            btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            //btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                            //btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                             btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
 
                             foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
@@ -475,6 +485,7 @@ namespace GolfClient
                             }
                         }
                     }
+                    gameSystem.GameState();
                 }
                 catch (Exception ex)
                 {
@@ -549,16 +560,44 @@ namespace GolfClient
             {
                 try
                 {
+                    string currentPlayer = null;
+                    _players.All(p => {
+                        if (p.myTurn)
+                            currentPlayer = p.Name;
+                        return true;
+                    });
+
                     for (int i = 0; i < _players.Count(); ++i)
                     {
                         if (formatName(_players[i].Name).Equals(usrName))
+                        {
+                            if (currentPlayer != null)
+                            {
+                                if (_players[i].myTurn)
+                                {
+                                    btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                                    btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                                    btn_drawnCard.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                                    btn_blindDeck.IsEnabled = true;
+                                    Message("It's your turn!");
+                                }
+                                else
+                                {
+                                    btn_blindDeck_dummy.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                                    btn_drawnCard.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                                    btn_blindDeck.IsEnabled = false;
+                                    Message(formatName(currentPlayer.ToString()) + "'s Turn!");
+                                }
+                            }
                             continue;
+                        }
 
                         foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
                         {
                             if (pt.Name.Replace('_', ' ') == formatName(_players[i].Name))
                             {
-                                (pt.FindName("PlayerName") as Label).Content = "Player: " + _players[i].Name;
+                                (pt.FindName("PlayerName") as Label).Content = "Player: " + formatName( _players[i].Name );
                                 (pt.FindName("PlayerPoints") as Label).Content = "Score: " + _players[i].Points;
 
                                 (pt.FindName("ReadyImage") as Image).Visibility = _players[i].isReady ? 
@@ -570,6 +609,9 @@ namespace GolfClient
                                     System.Windows.Visibility.Visible;
                             }
                         }
+
+
+                        
 
                         
                     }
