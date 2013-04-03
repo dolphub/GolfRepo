@@ -191,7 +191,7 @@ namespace GolfClient
                 string[] temp = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
                 gameSystem.DiscardedCard = temp[temp.Length - 1];
 
-                
+                gameSystem.UpdateTurn();   
             }
         }
 
@@ -251,6 +251,7 @@ namespace GolfClient
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName);
             }
 
+            gameSystem.UpdateTurn();
             
 
         }
@@ -617,6 +618,9 @@ namespace GolfClient
                         btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                         btn_drawnCard.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
 
+                        this.UsersBorder.BorderBrush = Brushes.Green;
+                        this.UsersBorder.BorderThickness = new System.Windows.Thickness(5);
+                        
                         Message("It's your turn!");
                     }
                     else
@@ -624,12 +628,13 @@ namespace GolfClient
                         //btn_blindDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
                         btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
                         btn_drawnCard.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-
-                        
-
+                    
                         btn_blindDeck.IsEnabled = false;
                         btn_discardDeck.IsEnabled = false;
                         btn_drawnCard.IsEnabled = false;
+
+                        this.UsersBorder.BorderBrush = Brushes.Black;
+                        this.UsersBorder.BorderThickness = new System.Windows.Thickness(2);
 
                         Message(formatName(currentPlayer.Name) + "'s Turn!");
                     }
