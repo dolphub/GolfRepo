@@ -65,6 +65,7 @@ namespace GolfClient
                 timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(timer_Tick);
                 timer.Interval = new TimeSpan(0, 0, 1);
+               
                 
                 this.GameTable.IsEnabled = false;
                 this.userCardGrid.IsEnabled = false;
