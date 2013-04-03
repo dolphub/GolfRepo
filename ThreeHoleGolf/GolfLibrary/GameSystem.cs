@@ -38,6 +38,9 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void NextTurn(Player[] _players);
 
+        //[OperationContract(IsOneWay = true)]
+        //void LoadResults(string[] names, int[] points);
+
 
 
         //void UpdateDiscard(string _discard);
@@ -90,6 +93,13 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void Leave(string name);
 
+        //Get rid of this a'sldAS":ldas'd;las';dlasd\sald
+        //saldas
+        //    las
+        //asdoiasjd;oisajpaodijasoijaspoiasj
+        //[OperationContract(IsOneWay = true)]
+        //void ShowResults();
+
         int NumCards { [OperationContract] get; }
         int NumDecks { [OperationContract] get; [OperationContract] set; }
         string DiscardedCard { [OperationContract]get; [OperationContract]set; }
@@ -129,25 +139,28 @@ namespace GolfLibrary
         #region GameCallBackSystem
         public bool Join(string name)
         {
-            bool hasAlpha = false;
-            bool hasChars = false;
+            bool isValid = false;
             foreach (char ch in name)
             {
                 if (char.IsLetter(ch))
                 {
-                    hasAlpha = true;
-                    hasChars = true;
+                    isValid = true;
                 }
                 else if (char.IsLetterOrDigit(ch))
-                    hasChars = true;
+                    isValid = true;
+                
             }
+
+            if (char.IsLetter(name[0]))
+                isValid = true;
+            else
+                isValid = false;
+
             // Unique name for the game
             if (gameCallBacks.ContainsKey(name.ToUpper()))
                 return false;
-            else if (!hasAlpha)
+            else if (!isValid)
                 return false;
-            else if (!hasChars)
-                return false; 
             else
             {
                 // Retrieve a clients callback proxy
@@ -185,6 +198,20 @@ namespace GolfLibrary
                 }
             }
         }
+
+        //public void ShowResults()
+        //{
+        //    List<string> names = new List<string>();
+        //    List<int> points = new List<int>();
+        //    foreach (Player player in Players)
+        //    {
+        //        names.Add(player.Name);
+        //        points.Add(player.Points);
+        //    }
+
+        //    foreach (IGameCallBack cb in gameCallBacks.Values)
+        //        cb.LoadResults(names.ToArray(), points.ToArray());
+        //}
 
         public void UpdateQueue(string username, bool isReady)
         {
@@ -320,7 +347,6 @@ namespace GolfLibrary
                 if (player.Name == name.ToUpper())
                     return player.Points;
             }
-
             //Bad value
             return -10;
         }

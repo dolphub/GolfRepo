@@ -35,9 +35,6 @@ namespace GolfClient
         private DispatcherTimer timer;
         private int timerCounter = 5;
 
-        private int playerPoints = 0;
-
-
         public MainWindow()
         {
 
@@ -87,6 +84,25 @@ namespace GolfClient
 
         }
 
+        //private void EndGame_Click_1(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        //ResultsPage results = new ResultsPage(
+        //        //gameSystem.ShowResults();
+
+        //        //System.Drawing.Image background = System.Drawing.Image.FromFile(@"\Images\Winner.png");
+        //        //result.BackgroundImage = background;
+        //        //background. = new BitmapImage(new Uri(@"\Images\Winner.jpg", UriKind.RelativeOrAbsolute));
+        //    }
+        //        //Throws after the background is closed
+        //    catch (Exception) { }
+            
+            
+        //}
+
+        
+
         private void StartGame()
         {
             DrawThreeCards();
@@ -130,6 +146,7 @@ namespace GolfClient
                 for (int i = 1; i <= 3; i++)
                 {
                     (btn_card1.FindName("face" + i) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + startingCards[i - 1] + ".jpg", UriKind.RelativeOrAbsolute));
+                    //(btn_card1.FindName("face" + i) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + "KingHearts" + ".jpg", UriKind.RelativeOrAbsolute));
                 }
             }
             catch (Exception ex)
@@ -237,24 +254,37 @@ namespace GolfClient
                 //Draged from the discard pile
                 //Set the user card image to the discarded card image
                 //gameSystem.ContestentSwap(this.usrName, 
-                string[] tempOldCard = (draggedFromButton.FindName(objectName) as Image).Source.ToString().Split('/');
+                string[] tempOldCard = (draggedToButton.FindName(objectName) as Image).Source.ToString().Split('/');
                 oldSwapImg = tempOldCard[tempOldCard.Length - 1].Split('.')[0];
 
-                string[] tempNewCard = ((btn_discardDeck.FindName("facediscardDeck") as Image).Source.ToString().Split('.')[0]).Split('/');
+                string[] tempNewCard = ((draggedFromButton.FindName("facediscardDeck") as Image).Source.ToString().Split('.')[0]).Split('/');
                 string newSwapImg = tempNewCard[tempNewCard.Length - 1];
 
+                if ((draggedToButton.FindName(objectName) as Image).Visibility != System.Windows.Visibility.Hidden)
+                    gameSystem.Points(-gameSystem.CardValue(oldSwapImg), usrName);
+
+                gameSystem.Points(gameSystem.CardValue(newSwapImg), usrName);
+
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, true, buttonName, objectName);
+
             }
             else
             {
                 string[] tempOldCard = (draggedToButton.FindName(objectName) as Image).Source.ToString().Split('/');
                 oldSwapImg = tempOldCard[tempOldCard.Length - 1].Split('.')[0];
 
-                string[] tempNewCard = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
+                string[] tempNewCard = ((draggedFromButton.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
                 string newSwapImg = tempNewCard[tempNewCard.Length - 1];
+
+                if ((draggedToButton.FindName(objectName) as Image).Visibility != System.Windows.Visibility.Hidden)
+                    gameSystem.Points(-gameSystem.CardValue(oldSwapImg), usrName);
+
+                gameSystem.Points(gameSystem.CardValue(newSwapImg), usrName);
 
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName);
             }
+
+            
 
             gameSystem.UpdateTurn();
 
@@ -429,19 +459,16 @@ namespace GolfClient
                            
                             (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + oldCard + ".jpg", UriKind.RelativeOrAbsolute));
                             Button droppedToBtn = userCardGrid.FindName(btnName) as Button;
+                           
+
+
                             (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
+                            
 
-                            if ((droppedToBtn.FindName(objectName) as Image).Visibility == System.Windows.Visibility.Visible)
-                                gameSystem.Points(-gameSystem.CardValue(oldCard), usrName);
-
-                            gameSystem.Points(gameSystem.CardValue(newCard), usrName);
                             //this.lbl_userPoints.Content = "Points: " + playerPoints;
 
+                            //this.lbl_userPoints.Content = "Points: " + gameSystem.GetPoints(usrName);
                             (droppedToBtn.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
-
-
-                            gameSystem.GameState();
-
                         }
                         else
                         {
@@ -449,20 +476,19 @@ namespace GolfClient
                             (btn_discardDeck.FindName("facediscardDeck") as Image).Visibility = System.Windows.Visibility.Visible;
 
                             Button droppedToBtn = userCardGrid.FindName(btnName) as Button;
+                            //if ((droppedToBtn.FindName(objectName) as Image).Visibility != System.Windows.Visibility.Hidden)
+                            //    gameSystem.Points(-gameSystem.CardValue(oldCard), usrName);
+
                             (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
-                            
-                            if ((droppedToBtn.FindName(objectName) as Image).Visibility == System.Windows.Visibility.Visible)
-                                gameSystem.Points(-gameSystem.CardValue(oldCard), usrName);
 
-                            gameSystem.Points(gameSystem.CardValue(newCard), usrName);
+                            //gameSystem.Points(gameSystem.CardValue(newCard), usrName);
 
+                            //this.lbl_userPoints.Content = "Points: " + gameSystem.GetPoints(usrName);
                             (droppedToBtn.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
 
                             //btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                             //btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                             btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
-
-                            gameSystem.GameState();
                         }
 
                     }
@@ -497,7 +523,6 @@ namespace GolfClient
                             {
                                 if (pt.Name.Replace('_', ' ') == userName)
                                 {
-                                    pt.PlayerPoints.Content = "Points: " + playerPoints;
                                     (pt.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
                                     (pt.FindName(objectName) as Image).Visibility = System.Windows.Visibility.Visible;
                                     break;
@@ -542,6 +567,26 @@ namespace GolfClient
             else
                 this.Dispatcher.BeginInvoke(new NewPlayerDelagate(NewPlayerJoin), new object[] { _names });
         }
+
+        //private delegate void LoadResultsDelegate(string[] names, int[] points);
+        //public void LoadResults(string[] names, int[] points)
+        //{
+        //    if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+        //    {
+        //        try
+        //        {
+        //            ResultsPage result = new ResultsPage();
+        //            result.LoadResults(names, points);
+        //            result.ShowDialog();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show(ex.Message);
+        //        }
+        //    }
+        //    else
+        //        this.Dispatcher.BeginInvoke(new LoadResultsDelegate(LoadResults), new object[] { names, points });
+        //}
 
         /// <summary>
         /// Delegate and function for when a player leaves, update the player grid
@@ -763,6 +808,10 @@ namespace GolfClient
                 gameSystem.UpdateQueue(this.usrName, true);
             }
         }
+
+
+
+
 
 
 

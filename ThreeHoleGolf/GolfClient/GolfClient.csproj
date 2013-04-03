@@ -56,6 +56,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ResultsPage.xaml.cs">
+      <DependentUpon>ResultsPage.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -75,6 +78,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PlayerTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResultsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -186,6 +193,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\NotReadyIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Loser.png" />
+    <Resource Include="Images\Winner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\WinnerIs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ResultsBackground.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="800" Width="1000" ResizeMode="NoResize" Closing="Window_Closing">
 
+    
     <Border BorderBrush="Black" BorderThickness="3" >
+       
         <Grid RenderTransformOrigin="0.5,0.5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="55*"/>
@@ -123,6 +125,9 @@
                     <Button x:Name="btn_help" Click="btn_help_Click" Height="25" Width="25" Grid.Row="1" Margin="0,0,5,5" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" >
                         <Image x:Name="helpIcon" Source="Images/HelpIcon.png" Stretch="Fill"/>
                     </Button>
+                    
+                    <!--<Button x:Name="EndGame" Content="End Game" Grid.Row="1" VerticalAlignment="Bottom" 
+                            Click="EndGame_Click_1"/>-->
 
 
                 </Grid>
