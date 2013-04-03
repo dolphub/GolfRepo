@@ -42,7 +42,7 @@
                         <ColumnDefinition Width="33*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="btn_card1" Grid.Column="0" IsEnabled="False" >
+                    <Button x:Name="btn_card1" Grid.Column="0" IsEnabled="False" Visibility="Hidden" >
                         <Grid >
                             <Image x:Name="back1" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face1" Stretch="Fill" Visibility="Hidden" />
@@ -50,14 +50,14 @@
                     </Button>
 
 
-                    <Button x:Name="btn_card2"  Grid.Column="1" IsEnabled="False" >
+                    <Button x:Name="btn_card2"  Grid.Column="1" IsEnabled="False" Visibility="Hidden">
                         <Grid >
                             <Image x:Name="back2" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face2" Stretch="Fill" Visibility="Hidden" />
                         </Grid>
                     </Button>
 
-                    <Button x:Name="btn_card3"  Grid.Column="2" IsEnabled="False" >
+                    <Button x:Name="btn_card3"  Grid.Column="2" IsEnabled="False" Visibility="Hidden" >
                         <Grid >
                             <Image x:Name="back3" Source="Images/Cards/BackCard.jpg" Stretch="Fill"/>
                             <Image x:Name="face3" Stretch="Fill" Visibility="Hidden" />

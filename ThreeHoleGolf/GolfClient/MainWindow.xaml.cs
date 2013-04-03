@@ -34,7 +34,7 @@ namespace GolfClient
         private string usrName = "";
         private DispatcherTimer timer;
         private int timerCounter = 5;
-
+        private Dictionary<string, bool> allCardsFlipped;
         private int playerPoints = 0;
 
 
@@ -55,25 +55,22 @@ namespace GolfClient
                 //bool hasAlpha = false;
                 do
                 {
-                    if (counter > 0 )
+                    if (counter > 0)
                         MessageBox.Show("Invalid Username. Please try another.");
                     counter++;
 
                     login.ShowDialog();
                 }
-                while ( !(gameSystem.Join(login.tb_username.Text)) );
+                while (!(gameSystem.Join(login.tb_username.Text)));
 
                 // Build the client
                 InitializeComponent();
-
+                allCardsFlipped = new Dictionary<string, bool>();
                 // Set variables and objects
                 timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(timer_Tick);
                 timer.Interval = new TimeSpan(0, 0, 1);
-                this.GameTable.IsEnabled = false;
-                this.userCardGrid.IsEnabled = false;
-                this.userCardGrid.Opacity = .5;
-                this.GameTable.Opacity = .5;
+                PreGame();
                 lbl_userName.Content += this.formatName(login.tb_username.Text);
                 usrName = formatName(login.tb_username.Text);
                 this.Title = usrName;
@@ -86,8 +83,47 @@ namespace GolfClient
 
         }
 
+
+
+        private void PreGame()
+        {
+            this.GameTable.IsEnabled = false;
+            this.userCardGrid.IsEnabled = false;
+            this.userCardGrid.Opacity = .5;
+            this.GameTable.Opacity = .5;
+
+            this.btn_Ready.Content = "Ready";
+            this.btn_drawnCard.Visibility = System.Windows.Visibility.Hidden;
+
+            this.UsersBorder.BorderBrush = Brushes.Black;
+            this.UsersBorder.BorderThickness = new System.Windows.Thickness(2);
+
+            foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
+            {
+                pt.PlayerBorder.BorderBrush = Brushes.Black;
+                pt.PlayerBorder.BorderThickness = new System.Windows.Thickness(2);
+            }
+
+            allCardsFlipped[btn_card1.Name.ToString()] = false;
+            allCardsFlipped[btn_card2.Name.ToString()] = false;
+            allCardsFlipped[btn_card3.Name.ToString()] = false;
+        }
+
         private void StartGame()
         {
+            this.btn_Ready.Visibility = System.Windows.Visibility.Hidden;
+            this.btn_card1.Visibility = System.Windows.Visibility.Visible;
+            this.btn_card2.Visibility = System.Windows.Visibility.Visible;
+            this.btn_card3.Visibility = System.Windows.Visibility.Visible;
+
+            foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
+            {
+                (pt.FindName("btn_card1") as Button).Visibility = System.Windows.Visibility.Visible;
+                (pt.FindName("btn_card2") as Button).Visibility = System.Windows.Visibility.Visible;
+                (pt.FindName("btn_card3") as Button).Visibility = System.Windows.Visibility.Visible;
+            }
+            
+
             DrawThreeCards();
             this.GameTable.IsEnabled = true;
             this.GameTable.Opacity = 1.0;
@@ -137,38 +173,6 @@ namespace GolfClient
             }
         }
 
-        // Swapping and Showing Cards
-        //public void SwapImage(bool _showface, FrameworkElement btn, string _identity, string newcard)
-        //{
-        //    (btn.FindName("face" + _identity) as Image).Source = new BitmapImage(new Uri(newcard, UriKind.RelativeOrAbsolute));
-        //    if (_showface) // Showing Face Card
-        //    {
-        //        (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
-        //        (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
-        //    }
-        //    else // Showing Back Card
-        //    {
-        //        (btn.FindName("back" + _identity) as Image).Visibility = System.Windows.Visibility.Visible;
-        //        (btn.FindName("face" + _identity) as Image).Visibility = System.Windows.Visibility.Hidden;
-        //    }
-        //}
-
-        //public void SwapRawImage(FrameworkElement btn, string id, string card)
-        //{
-        //    (btn.FindName(id) as Image).Source = new BitmapImage(new Uri(card + ".jpg", UriKind.RelativeOrAbsolute));
-        //}
-
-        //public void SwapContestantImage(string _playerID, string _identifier, string newcard)
-        //{
-        //    try
-        //    {
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Error swapping player " + _playerID + "'s card\n" + ex.InnerException.ToString());
-        //    }
-        //}
 
         //Draw a card from the deck
         private void btn_blindDeck_Click(object sender, RoutedEventArgs e)
@@ -194,6 +198,8 @@ namespace GolfClient
                 btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
                 string[] temp = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
                 gameSystem.DiscardedCard = temp[temp.Length - 1];
+
+                
 
                 gameSystem.UpdateTurn();
             }
@@ -255,6 +261,18 @@ namespace GolfClient
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName);
             }
 
+            allCardsFlipped[buttonName] = true;
+
+            bool lastTurn = true;
+            allCardsFlipped.All(c => {
+                if (!c.Value)
+                    lastTurn = false;
+                return true; 
+            });
+
+            if (lastTurn && !gameSystem.LastRound)
+                gameSystem.LastRound = true;
+            
             gameSystem.UpdateTurn();
 
 
@@ -311,6 +329,47 @@ namespace GolfClient
 
         #region CallBack Delegates
 
+        private delegate void GameEndingDelegate();
+        public void GameEnding()
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    (this.btn_card1.FindName("face1") as Image).Visibility = System.Windows.Visibility.Visible;
+                    (this.btn_card2.FindName("face2") as Image).Visibility = System.Windows.Visibility.Visible;
+                    (this.btn_card3.FindName("face3") as Image).Visibility = System.Windows.Visibility.Visible;
+                    this.btn_blindDeck.IsEnabled = false;
+                    this.btn_discardDeck.IsEnabled = false;
+                    Message("Game Over!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new GameEndingDelegate(GameEnding), new object[] { });
+        }
+
+        private delegate void SendMessageDelegate(string msg);
+        public void SendMessage(string msg)
+        {
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    this.GameMessageLbl.Content += Environment.NewLine + msg;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new SendMessageDelegate(SendMessage), new object[] { msg });
+        }
+
 
         /// <summary>
         /// Delagate and function for when a player draws a new card
@@ -344,8 +403,14 @@ namespace GolfClient
             {
                 try
                 {
+                    if (formatName(username) == this.usrName)
+                        this.btn_Ready.Content = isReady ? "Un-Ready" : "Ready";
+
                     if (!hasEnoughPlayers && isReady)
+                    {                        
                         Message("Not enough players!");
+                    }
+
                     else if (!hasEnoughPlayers && !isReady)
                         Message("Waiting for players...");
                     else
@@ -425,7 +490,7 @@ namespace GolfClient
                     {
                         if (fromDiscard)
                         {
-                           
+
                             (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + oldCard + ".jpg", UriKind.RelativeOrAbsolute));
                             Button droppedToBtn = userCardGrid.FindName(btnName) as Button;
                             (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
@@ -449,7 +514,7 @@ namespace GolfClient
 
                             Button droppedToBtn = userCardGrid.FindName(btnName) as Button;
                             (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
-                            
+
                             if ((droppedToBtn.FindName(objectName) as Image).Visibility == System.Windows.Visibility.Visible)
                                 gameSystem.Points(-gameSystem.CardValue(oldCard), usrName);
 
@@ -531,6 +596,8 @@ namespace GolfClient
                         this.PlayerGrid.Children.Add(pt);
                     }
                     gameSystem.GameState();
+                    this.GameGrid.IsEnabled = true;
+                    this.GameGrid.Opacity = 1.0;
                     Message("Waiting for players...");
                 }
                 catch (Exception ex)
@@ -676,7 +743,7 @@ namespace GolfClient
                                 pt.PlayerBorder.BorderThickness = new System.Windows.Thickness(5);
 
                                 pt.BringIntoView();
-                                
+
                             }
                             else
                             {
@@ -724,6 +791,27 @@ namespace GolfClient
 
                     (btn_card2.FindName("face1") as Image).Visibility = System.Windows.Visibility.Hidden;
                     (btn_card2.FindName("back1") as Image).Visibility = System.Windows.Visibility.Visible;
+
+                    this.btn_card1.Visibility = System.Windows.Visibility.Hidden;
+                    this.btn_card2.Visibility = System.Windows.Visibility.Hidden;
+                    this.btn_card3.Visibility = System.Windows.Visibility.Hidden;
+
+                    foreach (PlayerTemplate pt in PlayerGrid.Children.OfType<PlayerTemplate>())
+                    {
+                        (pt.FindName("btn_card1") as Button).Visibility = System.Windows.Visibility.Hidden;
+                        (pt.FindName("btn_card2") as Button).Visibility = System.Windows.Visibility.Hidden;
+                        (pt.FindName("btn_card3") as Button).Visibility = System.Windows.Visibility.Hidden;
+                    }
+
+                    
+
+                    
+                    this.btn_Ready.Visibility = System.Windows.Visibility.Visible;
+                    this.GameGrid.IsEnabled = true;
+                    this.GameGrid.Opacity = 1.0;
+
+                    PreGame();
+                    gameSystem.GameState();
                 }
                 catch (Exception ex)
                 {
@@ -734,11 +822,23 @@ namespace GolfClient
                 this.Dispatcher.BeginInvoke(new ResetClientDelegate(ResetClients), new object[] { });
         }
 
-
-
-        public void UpdateGui(CallBackInfo info)
+        private delegate void SendWaitQueueFreezeDelegate();
+        public void SendWaitQueueFreeze()
         {
-            throw new NotImplementedException();
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            {
+                try
+                {
+                    this.GameGrid.IsEnabled = false;
+                    this.GameGrid.Opacity = .5;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+                this.Dispatcher.BeginInvoke(new SendWaitQueueFreezeDelegate(SendWaitQueueFreeze), new object[] { });
         }
 
         #endregion
@@ -753,12 +853,10 @@ namespace GolfClient
         {
             if (btn_Ready.Content.ToString().Contains("Un"))
             {
-                btn_Ready.Content = "Ready";
                 gameSystem.UpdateQueue(this.usrName, false);
             }
             else
             {
-                btn_Ready.Content = "Un-Ready";
                 gameSystem.UpdateQueue(this.usrName, true);
             }
         }
