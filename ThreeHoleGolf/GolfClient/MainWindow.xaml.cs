@@ -608,25 +608,31 @@ namespace GolfClient
                             currentPlayer = p.Name;
                         return true;
                     });
+
+
+
                     for (int i = 0; i < _players.Count(); ++i)
                     {
-                        if (currentPlayer != null)
+                        if (formatName(_players[i].Name).Equals(usrName))
                         {
-                            if (_players[i].myTurn)
+                            if (currentPlayer != null)
                             {
-                                btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-                                btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-                                btn_drawnCard.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
-                                btn_blindDeck.IsEnabled = true;
-                                Message("It's your turn!");
-                            }
-                            else
-                            {
-                                btn_blindDeck_dummy.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-                                btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-                                btn_drawnCard.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
-                                btn_blindDeck.IsEnabled = false;
-                                Message(formatName(currentPlayer.ToString()) + "'s Turn!");
+                                if (_players[i].myTurn)
+                                {
+                                    btn_blindDeck_dummy.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                                    btn_discardDeck.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                                    btn_drawnCard.PreviewMouseLeftButtonDown += btn_PreviewMouseLeftButtonDown;
+                                    btn_blindDeck.IsEnabled = true;
+                                    Message("It's your turn!");
+                                }
+                                else
+                                {
+                                    btn_blindDeck_dummy.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                                    btn_discardDeck.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                                    btn_drawnCard.PreviewMouseLeftButtonDown -= btn_PreviewMouseLeftButtonDown;
+                                    btn_blindDeck.IsEnabled = false;
+                                    Message(formatName(currentPlayer.ToString()) + "'s Turn!");
+                                }
                             }
                         }
                     }

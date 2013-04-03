@@ -302,7 +302,11 @@ namespace GolfLibrary
 
             Players.All(p => { p.myTurn = false; return true; });
             Players[_currentTurnPosition++].myTurn = true;
-            GameState();
+
+            foreach (IGameCallBack gcb in gameCallBacks.Values)
+                gcb.NextTurn(Players.ToArray());
+
+            
         }
 
         public void StartGame()
