@@ -380,8 +380,12 @@ namespace GolfLibrary
             {
                 foreach (Player player in Players)
                 {
-                    if (player.Name == name.ToUpper())
+                    if (player.Name.ToUpper() == name.ToUpper())
+                    {
                         player.Points += cardValue;
+                        break;
+                    }
+                    
                 }
                 GameState();
                 _pointsUpdate = DateTime.Now;

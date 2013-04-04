@@ -435,7 +435,6 @@ namespace GolfClient
                         (this.btn_card1.FindName("face3") as Image).Visibility = System.Windows.Visibility.Visible;
                         temp = (this.btn_card1.FindName("face3") as Image).Source.ToString().Split('/');
                         gameSystem.Points(gameSystem.CardValue(temp[temp.Length - 1].Split('.')[0]), usrName);
-
                     }
 
                     gameSystem.GameState();
