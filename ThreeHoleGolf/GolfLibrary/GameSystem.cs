@@ -79,13 +79,13 @@ namespace GolfLibrary
         void StartGame();
 
         [OperationContract]
-        void GetResults(string usrname);
+        void GetResults();
 
         [OperationContract]
         int CardValue(string card);
 
         [OperationContract]
-        void Points(int cardValue, string name);
+        void Points(string[] _cards, string name);
 
         [OperationContract]
         int GetPoints(string name);
@@ -114,7 +114,7 @@ namespace GolfLibrary
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private Dictionary<string, IGameCallBack> gameWaitQueue = new Dictionary<string, IGameCallBack>();
         private int numDecks = 1;
-        private int cardIdx, playerCount = 0;
+        private int cardIdx, playerCount = 0, endGameCounter = 0;
         private string _drawnCard, _discardCard;
         public List<Player> Players;
         private bool _gameInProgrees = false;
@@ -211,20 +211,6 @@ namespace GolfLibrary
                 ResetGame();
             }
         }
-
-        //public void ShowResults()
-        //{
-        //    List<string> names = new List<string>();
-        //    List<int> points = new List<int>();
-        //    foreach (Player player in Players)
-        //    {
-        //        names.Add(player.Name);
-        //        points.Add(player.Points);
-        //    }
-
-        //    foreach (IGameCallBack cb in gameCallBacks.Values)
-        //        cb.LoadResults(names.ToArray(), points.ToArray());
-        //}
 
         public void UpdateQueue(string username, bool isReady)
         {
@@ -374,7 +360,7 @@ namespace GolfLibrary
         }
 
         private DateTime _pointsUpdate = DateTime.Now;
-        public void Points(int cardValue, string name)
+        public void Points(string[] _cards, string name)
         {
             if (DateTime.Now - _pointsUpdate > TimeSpan.FromSeconds(1))
             {
@@ -382,26 +368,52 @@ namespace GolfLibrary
                 {
                     if (player.Name.ToUpper() == name.ToUpper())
                     {
-                        player.Points += cardValue;
+                        int accumulatedPoints = 0;
+                        for (int i = 0; i < _cards.Length; ++i)
+                        {
+                            accumulatedPoints += CardValue(_cards[i]);
+                        }
+                        player.Points = accumulatedPoints;
                         break;
                     }
-                    
                 }
+
+
                 GameState();
                 _pointsUpdate = DateTime.Now;
             }
         }
-
-        public void GetResults(string username)
+        public int CardValue(string card)
         {
-            List<string> names = new List<string>();
-            List<int> points = new List<int>();
-            foreach (Player player in Players)
+            foreach (Card c in cards)
             {
-                names.Add(player.Name);
-                points.Add(player.Points);
+                if (card == c.sName)
+                    return c.Value;
             }
-            gameCallBacks[username.ToUpper()].sendResults(names.ToArray(), points.ToArray());
+
+            //Bad Value
+            return -10;
+        }
+
+        public void GetResults()
+        {
+            ++endGameCounter;
+            if (endGameCounter == Players.Count)
+            {
+                
+                List<string> names = new List<string>();
+                List<int> points = new List<int>();
+                foreach (Player player in Players)
+                {
+                    names.Add(player.Name);
+                    points.Add(player.Points);
+                }
+                foreach( IGameCallBack gcb in gameCallBacks.Values )
+                    gcb.sendResults(names.ToArray(), points.ToArray());
+
+                endGameCounter = 0;
+            }
+            
         }
 
         public int GetPoints(string name)
@@ -480,17 +492,6 @@ namespace GolfLibrary
 
 
 
-        public int CardValue(string card)
-        {
-            foreach (Card c in cards)
-            {
-                if (card == c.sName)
-                    return c.Value;
-            }
-
-            //Bad Value
-            return -10;
-        }
 
         // number of cards remaining in the shoe
         public int NumCards

@@ -85,7 +85,7 @@ namespace GolfClient
                         ListViewItem point = new ListViewItem();
                         if (i == 0)
                         {
-                            name.Content = (i + 1) + ".      " + players[i].Key + "\n";
+                            name.Content = (i + 1) + ".        " + players[i].Key + "\n";
                             name.FontSize = 20;
                             name.Foreground = new SolidColorBrush(Colors.MediumSpringGreen);
                             name.FontFamily = new System.Windows.Media.FontFamily("Cooper Black");
