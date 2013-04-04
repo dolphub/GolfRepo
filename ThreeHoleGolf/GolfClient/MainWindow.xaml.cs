@@ -33,6 +33,7 @@ namespace GolfClient
         private string card = null;
         private string usrName = "";
         private DispatcherTimer timer;
+        private DispatcherTimer endTimer;
         private int timerCounter = 5;
 
         private Dictionary<string, bool> allCardsFlipped;
@@ -69,6 +70,11 @@ namespace GolfClient
                 timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(timer_Tick);
                 timer.Interval = new TimeSpan(0, 0, 1);
+
+                endTimer = new DispatcherTimer();
+                endTimer.Tick += new EventHandler(endgame_timer);
+                endTimer.Interval = new TimeSpan(0, 0, 1);
+
                 PreGame();
                 lbl_userName.Content += this.formatName(login.tb_username.Text);
                 usrName = formatName(login.tb_username.Text);
@@ -81,6 +87,8 @@ namespace GolfClient
             }
 
         }
+
+
 
 
         private void PreGame()
@@ -120,7 +128,7 @@ namespace GolfClient
                 (pt.FindName("btn_card2") as Button).Visibility = System.Windows.Visibility.Visible;
                 (pt.FindName("btn_card3") as Button).Visibility = System.Windows.Visibility.Visible;
             }
-            
+
 
             DrawThreeCards();
             this.GameTable.IsEnabled = true;
@@ -145,7 +153,16 @@ namespace GolfClient
                 timer.Stop();
                 StartGame();
             }
+        }
 
+        private void endgame_timer(object sender, EventArgs e)
+        {
+            timerCounter -= 1;
+            if (timerCounter == 0)
+            {
+                endTimer.Stop();
+                gameSystem.ResetGame();
+            }
         }
 
         private void Message(string msg)
@@ -198,7 +215,7 @@ namespace GolfClient
                 string[] temp = ((btn_drawnCard.FindName("facedrawnCard") as Image).Source.ToString().Split('.')[0]).Split('/');
                 gameSystem.DiscardedCard = temp[temp.Length - 1];
 
-                
+
 
                 gameSystem.UpdateTurn();
             }
@@ -275,15 +292,16 @@ namespace GolfClient
             allCardsFlipped[buttonName] = true;
 
             bool lastTurn = true;
-            allCardsFlipped.All(c => {
+            allCardsFlipped.All(c =>
+            {
                 if (!c.Value)
                     lastTurn = false;
-                return true; 
+                return true;
             });
 
             if (lastTurn && !gameSystem.LastRound)
                 gameSystem.LastRound = true;
-            
+
             gameSystem.UpdateTurn();
 
 
@@ -353,6 +371,8 @@ namespace GolfClient
                     this.btn_blindDeck.IsEnabled = false;
                     this.btn_discardDeck.IsEnabled = false;
                     Message("Game Over!");
+                    timerCounter = 3;
+                    endTimer.Start();
                 }
                 catch (Exception ex)
                 {
@@ -418,7 +438,7 @@ namespace GolfClient
                         this.btn_Ready.Content = isReady ? "Un-Ready" : "Ready";
 
                     if (!hasEnoughPlayers && isReady)
-                    {                        
+                    {
                         Message("Not enough players!");
                     }
 
@@ -504,11 +524,11 @@ namespace GolfClient
 
                             (btn_discardDeck.FindName("facediscardDeck") as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + oldCard + ".jpg", UriKind.RelativeOrAbsolute));
                             Button droppedToBtn = userCardGrid.FindName(btnName) as Button;
-                           
+
 
 
                             (droppedToBtn.FindName(objectName) as Image).Source = new BitmapImage(new Uri(@"\Images\Cards\" + newCard + ".jpg", UriKind.RelativeOrAbsolute));
-                            
+
 
                             //this.lbl_userPoints.Content = "Points: " + playerPoints;
 
@@ -829,9 +849,9 @@ namespace GolfClient
                         (pt.FindName("btn_card3") as Button).Visibility = System.Windows.Visibility.Hidden;
                     }
 
-                    
 
-                    
+
+
                     this.btn_Ready.Visibility = System.Windows.Visibility.Visible;
                     this.GameGrid.IsEnabled = true;
                     this.GameGrid.Opacity = 1.0;

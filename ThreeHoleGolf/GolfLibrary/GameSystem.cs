@@ -86,7 +86,6 @@ namespace GolfLibrary
         [OperationContract]
         int GetPoints(string name);
 
-
         [OperationContract(IsOneWay = true)]
         void UpdateTurn();
 
@@ -299,26 +298,39 @@ namespace GolfLibrary
         /// </summary>
         public void ResetGame()
         {
-            this.Shuffle();
-            Players.All(p => { p.isReady = false; p.Points = 0; return true; });
-            foreach (IGameCallBack gcb in gameCallBacks.Values)
-                gcb.ResetClients();
-
-
-
-            if (gameWaitQueue.Count > 0)
+            try
             {
-                foreach (string x in gameWaitQueue.Keys)
+                ++playerCount;
+                if (playerCount != Players.Count())
                 {
-                    gameCallBacks.Add(x, gameWaitQueue[x]);
-                    Players.Add(new Player(x, false));
+                    System.Threading.Thread.Sleep(5000);
+                    this.Shuffle();
+                    Players.All(p => { p.isReady = false; p.Points = 0; return true; });
+                    foreach (IGameCallBack gcb in gameCallBacks.Values)
+                        gcb.ResetClients();
 
+                    this.LastRound = false;
+
+                    if (gameWaitQueue.Count > 0)
+                    {
+                        foreach (string x in gameWaitQueue.Keys)
+                        {
+                            gameCallBacks.Add(x, gameWaitQueue[x]);
+                            Players.Add(new Player(x, false));
+
+                        }
+                        gameWaitQueue.Clear();
+
+                        foreach (IGameCallBack gcb in gameCallBacks.Values)
+                            gcb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
+                    }
                 }
-                gameWaitQueue.Clear();
-
-                foreach (IGameCallBack gcb in gameCallBacks.Values)
-                    gcb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         private string formatName(string _raw)
@@ -357,12 +369,17 @@ namespace GolfLibrary
             }
         }
 
+        private DateTime _pointsUpdate = DateTime.Now;
         public void Points(int cardValue, string name)
         {
-            foreach (Player player in Players)
+            if (DateTime.Now - _pointsUpdate > TimeSpan.FromSeconds(1))
             {
-                if (player.Name == name.ToUpper())
-                    player.Points += cardValue;
+                foreach (Player player in Players)
+                {
+                    if (player.Name == name.ToUpper())
+                        player.Points += cardValue;
+                }
+                _pointsUpdate = DateTime.Now;
             }
         }
 
@@ -584,10 +601,11 @@ namespace GolfLibrary
                 }
                 else // else if the bool is false, we send final scores, and reset game
                 {
+                    playerCount = 0;
                     foreach (IGameCallBack gcb in gameCallBacks.Values)
                         gcb.GameEnding();
-                    System.Threading.Thread.Sleep(5000);
-                    ResetGame();
+                    
+                    //ResetGame();
                 }
             }
         }
