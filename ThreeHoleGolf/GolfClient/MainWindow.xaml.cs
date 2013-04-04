@@ -235,7 +235,6 @@ namespace GolfClient
 
             string oldSwapImg = "";
 
-            //Set the bottom card to the image of the drawn card that was dragged down
             if (name != "")
             {
                 //Draged from the discard pile
@@ -271,7 +270,7 @@ namespace GolfClient
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName);
             }
 
-
+            //Set the bottom card to the image of the drawn card that was dragged down
             allCardsFlipped[buttonName] = true;
 
             bool lastTurn = true;
@@ -285,8 +284,6 @@ namespace GolfClient
                 gameSystem.LastRound = true;
             
             gameSystem.UpdateTurn();
-
-
         }
 
         // format a name for first capital, rest lower
@@ -340,8 +337,8 @@ namespace GolfClient
 
         #region CallBack Delegates
 
-        private delegate void GameEndingDelegate();
-        public void GameEnding()
+        private delegate void GameEndingDelegate(string[] names, int[] points);
+        public void GameEnding(string[] names, int[] points)
         {
             if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
             {
@@ -353,6 +350,10 @@ namespace GolfClient
                     this.btn_blindDeck.IsEnabled = false;
                     this.btn_discardDeck.IsEnabled = false;
                     Message("Game Over!");
+
+                    ResultsPage results = new ResultsPage();
+                    results.LoadResults(names, points);
+                    results.Show();
                 }
                 catch (Exception ex)
                 {
@@ -360,7 +361,7 @@ namespace GolfClient
                 }
             }
             else
-                this.Dispatcher.BeginInvoke(new GameEndingDelegate(GameEnding), new object[] { });
+                this.Dispatcher.BeginInvoke(new GameEndingDelegate(GameEnding), new object[] { names, points });
         }
 
         private delegate void SendMessageDelegate(string msg);

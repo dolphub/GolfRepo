@@ -46,7 +46,7 @@ namespace GolfLibrary
         void SendMessage(string msg);
 
         [OperationContract(IsOneWay = true)]
-        void GameEnding();
+        void GameEnding(string[] names, int[] points);
     }
 
     [ServiceContract(CallbackContract = typeof(IGameCallBack))]
@@ -208,19 +208,7 @@ namespace GolfLibrary
             }
         }
 
-        //public void ShowResults()
-        //{
-        //    List<string> names = new List<string>();
-        //    List<int> points = new List<int>();
-        //    foreach (Player player in Players)
-        //    {
-        //        names.Add(player.Name);
-        //        points.Add(player.Points);
-        //    }
-
-        //    foreach (IGameCallBack cb in gameCallBacks.Values)
-        //        cb.LoadResults(names.ToArray(), points.ToArray());
-        //}
+       
 
         public void UpdateQueue(string username, bool isReady)
         {
@@ -357,12 +345,17 @@ namespace GolfLibrary
             }
         }
 
+        private DateTime _pointsUpdate = DateTime.Now;
         public void Points(int cardValue, string name)
         {
-            foreach (Player player in Players)
+            if (DateTime.Now - _pointsUpdate > TimeSpan.FromSeconds(1))
             {
-                if (player.Name == name.ToUpper())
-                    player.Points += cardValue;
+                foreach (Player player in Players)
+                {
+                    if (player.Name == name.ToUpper())
+                        player.Points += cardValue;
+                }
+                _pointsUpdate = DateTime.Now;
             }
         }
 
@@ -584,8 +577,16 @@ namespace GolfLibrary
                 }
                 else // else if the bool is false, we send final scores, and reset game
                 {
+                    List<string> names = new List<string>();
+                    List<int> points = new List<int>();
+                    foreach (Player player in Players)
+                    {
+                        names.Add(player.Name);
+                        points.Add(player.Points);
+                    }
+
                     foreach (IGameCallBack gcb in gameCallBacks.Values)
-                        gcb.GameEnding();
+                        gcb.GameEnding(names.ToArray(), points.ToArray());
                     System.Threading.Thread.Sleep(5000);
                     ResetGame();
                 }
