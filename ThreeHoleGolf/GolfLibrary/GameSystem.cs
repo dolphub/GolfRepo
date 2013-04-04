@@ -38,6 +38,8 @@ namespace GolfLibrary
         [OperationContract(IsOneWay = true)]
         void NextTurn(Player[] _players);
 
+        [OperationContract(IsOneWay = true)]
+        void sendResults(string[] names, int[] points);
 
         [OperationContract(IsOneWay = true)]
         void SendWaitQueueFreeze();
@@ -76,6 +78,8 @@ namespace GolfLibrary
         [OperationContract]
         void StartGame();
 
+        [OperationContract]
+        void GetResults(string usrname);
 
         [OperationContract]
         int CardValue(string card);
@@ -146,7 +150,7 @@ namespace GolfLibrary
                 }
                 else if (char.IsLetterOrDigit(ch))
                     isValid = true;
-                
+
             }
 
             if (char.IsLetter(name[0]))
@@ -181,6 +185,7 @@ namespace GolfLibrary
                         foreach (IGameCallBack cb in gameCallBacks.Values)
                             cb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
                     }
+                    GameState();
                 }
                 return true;
             }
@@ -201,7 +206,7 @@ namespace GolfLibrary
                     foreach (IGameCallBack cb in gameCallBacks.Values)
                         cb.PlayerDisconnected(gameCallBacks.Keys.ToArray());
                 }
-                
+
                 this._gameInProgrees = false;
                 ResetGame();
             }
@@ -300,17 +305,15 @@ namespace GolfLibrary
         {
             try
             {
-                ++playerCount;
                 if (playerCount != Players.Count())
                 {
-                    System.Threading.Thread.Sleep(5000);
                     this.Shuffle();
                     Players.All(p => { p.isReady = false; p.Points = 0; return true; });
                     foreach (IGameCallBack gcb in gameCallBacks.Values)
                         gcb.ResetClients();
+                    GameState();
 
                     this.LastRound = false;
-
                     if (gameWaitQueue.Count > 0)
                     {
                         foreach (string x in gameWaitQueue.Keys)
@@ -325,12 +328,13 @@ namespace GolfLibrary
                             gcb.NewPlayerJoin(gameCallBacks.Keys.ToArray());
                     }
                 }
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            
+
         }
 
         private string formatName(string _raw)
@@ -379,8 +383,21 @@ namespace GolfLibrary
                     if (player.Name == name.ToUpper())
                         player.Points += cardValue;
                 }
+                GameState();
                 _pointsUpdate = DateTime.Now;
             }
+        }
+
+        public void GetResults(string username)
+        {
+            List<string> names = new List<string>();
+            List<int> points = new List<int>();
+            foreach (Player player in Players)
+            {
+                names.Add(player.Name);
+                points.Add(player.Points);
+            }
+            gameCallBacks[username.ToUpper()].sendResults(names.ToArray(), points.ToArray());
         }
 
         public int GetPoints(string name)
@@ -397,6 +414,7 @@ namespace GolfLibrary
         // reorder the cards in the shoe
         public void Shuffle()
         {
+            Console.WriteLine("Shuffling the deck...");
             randomizeCards();
         }
 
@@ -455,6 +473,8 @@ namespace GolfLibrary
                 }
             }
         }
+
+
 
         public int CardValue(string card)
         {
@@ -604,7 +624,7 @@ namespace GolfLibrary
                     playerCount = 0;
                     foreach (IGameCallBack gcb in gameCallBacks.Values)
                         gcb.GameEnding();
-                    
+
                     //ResetGame();
                 }
             }
@@ -624,6 +644,9 @@ namespace GolfLibrary
                     _lastRoundStoppingPoint = _currentTurnPosition;
             }
         }
+
+
+
 
     } // end class
 }
