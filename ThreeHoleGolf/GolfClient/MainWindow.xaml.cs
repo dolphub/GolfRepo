@@ -297,7 +297,7 @@ namespace GolfClient
                 //if ((draggedToButton.FindName(objectName) as Image).Visibility != System.Windows.Visibility.Hidden)
                 //    gameSystem.Points(-gameSystem.CardValue(oldSwapImg), usrName);
 
-                
+
 
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, true, buttonName, objectName);
 
@@ -313,13 +313,13 @@ namespace GolfClient
                 //if ((draggedToButton.FindName(objectName) as Image).Visibility != System.Windows.Visibility.Hidden)
                 //    gameSystem.Points(-gameSystem.CardValue(oldSwapImg), usrName);
 
-                
+
 
                 gameSystem.ContestentSwap(this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName);
             }
 
 
-            
+
             allCardsFlipped[buttonName] = true;
 
             bool lastTurn = true;
@@ -343,7 +343,7 @@ namespace GolfClient
             List<string> cards = new List<string>();
             string[] temp;
             if ((this.btn_card1.FindName("face1") as Image).Visibility == System.Windows.Visibility.Visible)
-            {   
+            {
                 temp = (this.btn_card1.FindName("face1") as Image).Source.ToString().Split('/');
                 cards.Add(temp[temp.Length - 1].Split('.')[0]);
             }
@@ -441,11 +441,48 @@ namespace GolfClient
             {
                 try
                 {
-                    (this.btn_card1.FindName("face1") as Image).Visibility = System.Windows.Visibility.Visible;
-                    (this.btn_card2.FindName("face2") as Image).Visibility = System.Windows.Visibility.Visible;
-                    (this.btn_card3.FindName("face3") as Image).Visibility = System.Windows.Visibility.Visible;
+                    string[] temp;
+                    if ((this.btn_card1.FindName("face1") as Image).Visibility == System.Windows.Visibility.Hidden)
+                    {
+                        (this.btn_card1.FindName("face1") as Image).Visibility = System.Windows.Visibility.Visible;
+                        temp = (this.btn_card1.FindName("face1") as Image).Source.ToString().Split('/');
+                        string newcard = (temp[temp.Length - 1].Split('.')[0]);
 
-                    UpdatePoints();
+                        temp = (this.btn_discardDeck.FindName("facediscardDeck") as Image).Source.ToString().Split('/');
+                        string oldcard = (temp[temp.Length - 1].Split('.')[0]);
+
+                        gameSystem.ContestentSwap(this.usrName, newcard, oldcard, true, "btn_card1", "face1");
+                        
+                    }
+
+                    if ((this.btn_card2.FindName("face2") as Image).Visibility == System.Windows.Visibility.Hidden)
+                    {
+                        (this.btn_card2.FindName("face2") as Image).Visibility = System.Windows.Visibility.Visible;
+                        temp = (this.btn_card2.FindName("face2") as Image).Source.ToString().Split('/');
+                        string newcard = (temp[temp.Length - 1].Split('.')[0]);
+
+                        temp = (this.btn_discardDeck.FindName("facediscardDeck") as Image).Source.ToString().Split('/');
+                        string oldcard = (temp[temp.Length - 1].Split('.')[0]);
+
+                        gameSystem.ContestentSwap(this.usrName, newcard, oldcard, true, "btn_card2", "face2");
+                    }
+
+                    if ((this.btn_card3.FindName("face3") as Image).Visibility == System.Windows.Visibility.Hidden)
+                    {
+                        (this.btn_card3.FindName("face3") as Image).Visibility = System.Windows.Visibility.Visible;
+                        temp = (this.btn_card3.FindName("face3") as Image).Source.ToString().Split('/');
+                        string newcard = (temp[temp.Length - 1].Split('.')[0]);
+
+                        temp = (this.btn_discardDeck.FindName("facediscardDeck") as Image).Source.ToString().Split('/');
+                        string oldcard = (temp[temp.Length - 1].Split('.')[0]);
+
+                        gameSystem.ContestentSwap(this.usrName, newcard, oldcard, true, "btn_card3", "face3");
+                    }
+
+
+
+
+                    //UpdatePoints();
 
                     gameSystem.GameState();
                     this.btn_blindDeck.IsEnabled = false;
