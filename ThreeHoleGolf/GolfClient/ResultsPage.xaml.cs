@@ -32,6 +32,7 @@ namespace GolfClient
 
         public void LoadResults(string[] names, int[] points)
         {
+            this.Show();
             playerNames = names.ToList();
             playerPoints = points.ToList();
             //"Winner" will be the winner name that will be inputed
@@ -84,7 +85,7 @@ namespace GolfClient
                         ListViewItem point = new ListViewItem();
                         if (i == 0)
                         {
-                            name.Content = (i + 1) + ". " + players[i].Key + "\n";
+                            name.Content = (i + 1) + ".        " + players[i].Key + "\n";
                             name.FontSize = 20;
                             name.Foreground = new SolidColorBrush(Colors.MediumSpringGreen);
                             name.FontFamily = new System.Windows.Media.FontFamily("Cooper Black");
@@ -98,7 +99,7 @@ namespace GolfClient
                         }
                         else
                         {
-                            name.Content = (i + 1) + ". " + players[i].Key + "\n";
+                            name.Content = (i + 1) + ".\t" + players[i].Key + "\n";
                             name.FontSize = 14;
                             name.FontFamily = new System.Windows.Media.FontFamily("Cooper Black");
                             name.IsEnabled = false;
