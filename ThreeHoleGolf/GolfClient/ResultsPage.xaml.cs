@@ -30,18 +30,29 @@ namespace GolfClient
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Load all of results into lists to be furthur evaluated to determine a winner
+        /// </summary>
+        /// <param name="names"></param>
+        /// <param name="points"></param>
         public void LoadResults(string[] names, int[] points)
         {
             this.Show();
             playerNames = names.ToList();
             playerPoints = points.ToList();
-            //"Winner" will be the winner name that will be inputed
+
+            //Delay the starting screen before showing the winner
             delay = new DispatcherTimer();
             delay.Tick += new EventHandler(timer_switch);
             delay.Interval = new TimeSpan(0, 0, 1);
             delay.Start();
         }
 
+        /// <summary>
+        /// Switch to the results image when the waiting time is up.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timer_switch(object sender, EventArgs e)
         {
             try
@@ -76,8 +87,11 @@ namespace GolfClient
                         players.Add(new KeyValuePair<string, int>(playerNames[i], playerPoints[i]));
                     }
 
-                    players = players.OrderBy(x => x.Value).ToList();
 
+                    //Order all of the plyaers by points
+                    players = players.OrderBy(x => x.Value).ToList();
+                    
+                    //Display all of the players in correct order on the results page.
                     for (int i = 0; i < players.Count; ++i)
                     {
                         //Winner get a special detail

@@ -321,20 +321,13 @@ namespace GolfClient
             {
                 //Draged from the discard pile
                 //Set the user card image to the discarded card image
-                //gameSystem.ContestentSwap(this.usrName, 
                 string[] tempOldCard = ( draggedToButton.FindName( objectName ) as Image ).Source.ToString().Split( '/' );
                 oldSwapImg = tempOldCard[tempOldCard.Length - 1].Split( '.' )[0];
 
                 string[] tempNewCard = ( ( draggedFromButton.FindName( "facediscardDeck" ) as Image ).Source.ToString().Split( '.' )[0] ).Split( '/' );
                 string newSwapImg = tempNewCard[tempNewCard.Length - 1];
 
-                //if ((draggedToButton.FindName(objectName) as Image).Visibility != System.Windows.Visibility.Hidden)
-                //    gameSystem.Points(-gameSystem.CardValue(oldSwapImg), usrName);
-
-
-
                 gameSystem.ContestentSwap( this.usrName, newSwapImg, oldSwapImg, true, buttonName, objectName );
-
             }
             else
             {
@@ -343,11 +336,6 @@ namespace GolfClient
 
                 string[] tempNewCard = ( ( draggedFromButton.FindName( "facedrawnCard" ) as Image ).Source.ToString().Split( '.' )[0] ).Split( '/' );
                 string newSwapImg = tempNewCard[tempNewCard.Length - 1];
-
-                //if ((draggedToButton.FindName(objectName) as Image).Visibility != System.Windows.Visibility.Hidden)
-                //    gameSystem.Points(-gameSystem.CardValue(oldSwapImg), usrName);
-
-
 
                 gameSystem.ContestentSwap( this.usrName, newSwapImg, oldSwapImg, false, buttonName, objectName );
             }
@@ -407,7 +395,11 @@ namespace GolfClient
             else
                 return _raw;
         }
-        //Create a popup for the help menu
+        /// <summary>
+        /// Create a popup for the help menu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_help_Click( object sender, RoutedEventArgs e )
         {
             System.Windows.Forms.Form form = new System.Windows.Forms.Form();
@@ -974,13 +966,9 @@ namespace GolfClient
         private void btn_Ready_Click_1( object sender, RoutedEventArgs e )
         {
             if( btn_Ready.Content.ToString().Contains( "Un" ) )
-            {
                 gameSystem.UpdateQueue( this.usrName, false );
-            }
             else
-            {
                 gameSystem.UpdateQueue( this.usrName, true );
-            }
         }
     } // end class
 } // end namespace
