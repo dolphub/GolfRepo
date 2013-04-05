@@ -11,32 +11,30 @@ namespace GolfService
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main( string[] args )
         {
             ServiceHost servHost = null;
             try
             {
                 // Address
-                servHost = new ServiceHost(typeof(GameSystem));
-
+                servHost = new ServiceHost( typeof( GameSystem ) );
                 // Start the service
                 servHost.Open();
-
                 // wait for a keystroke to shut down the service, 
-                Console.WriteLine("Press any key to shut the service down. ");
+                Console.WriteLine( "Press any key to shut the service down. " );
                 Console.ReadKey();
             }
-            catch (Exception ex)
+            catch( Exception ex )
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine( ex.Message );
             }
             finally
             {
                 // Shut down the service
                 Console.ReadKey();
-                if (servHost != null)
+                if( servHost != null )
                     servHost.Close();
             }
-        }
-    }
-}
+        } // end main
+    } // end class
+} // end namespace
