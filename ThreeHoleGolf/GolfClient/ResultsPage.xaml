@@ -21,8 +21,8 @@
         
         <Image x:Name="img_start" Source="Images\WinnerIs.png" Grid.Row="0" Grid.RowSpan="5" Grid.Column="0" Grid.ColumnSpan="6" />
         <Image x:Name="img_results" Source="Images\ResultsBackground.png" Height="600" Width="800" Visibility="Hidden" Grid.Row="0" Grid.RowSpan="5" Grid.Column="0" Grid.ColumnSpan="6"/>
-        <ListView x:Name="lv_names" Background="Transparent" Grid.Row="1" Grid.RowSpan="3"  Grid.Column="1" BorderBrush="Transparent" Grid.ColumnSpan="2" Visibility="Hidden"/>
-        <ListView x:Name="lv_point" Background="Transparent"  Grid.Row="1" Grid.RowSpan="3" Grid.Column="3" BorderBrush="Transparent" Grid.ColumnSpan="2" Visibility="Hidden"/>
+        <ListView x:Name="lv_names" HorizontalAlignment="Center" Background="Transparent" Grid.Row="1" Grid.RowSpan="3"  Grid.Column="1" BorderBrush="Transparent" Grid.ColumnSpan="2" Visibility="Hidden"/>
+        <ListView x:Name="lv_point"  HorizontalAlignment="Center" Background="Transparent"  Grid.Row="1" Grid.RowSpan="3" Grid.Column="3" BorderBrush="Transparent" Grid.ColumnSpan="2" Visibility="Hidden"/>
         
     </Grid>
 </Window>

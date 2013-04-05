@@ -3,102 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.ServiceModel;
-
 namespace GolfLibrary
 {
-
     public interface IGameCallBack
     {
-        [OperationContract(IsOneWay = true)]
-        void UpdateDrawn(string _drawn);
-
-        [OperationContract(IsOneWay = true)]
-        void UpdateDiscard(string _discard);
-
-        [OperationContract(IsOneWay = true)]
-        void UpdateContestantCard(string userName, string newCard, string oldCard, bool fromDrawn, string btnName, string objectName);
-
-        [OperationContract(IsOneWay = true)]
-        void NewPlayerJoin(string[] _names);
-
-        [OperationContract(IsOneWay = true)]
-        void PlayerDisconnected(string[] _names);
-
-        [OperationContract(IsOneWay = true)]
-        void UpdateQueue(string userName, bool isReady, bool StartGame, bool hasEnoughPlayers);
-
-        [OperationContract(IsOneWay = true)]
-        void UpdateGameState(Player[] _players);
-
-        [OperationContract(IsOneWay = true)]
-        void ResetClients();
-
-        [OperationContract(IsOneWay = true)]
-        void NextTurn(Player[] _players);
-
-        [OperationContract(IsOneWay = true)]
-        void sendResults(string[] names, int[] points);
-
-        [OperationContract(IsOneWay = true)]
-        void SendWaitQueueFreeze();
-
-        [OperationContract(IsOneWay = true)]
-        void SendMessage(string msg);
-
-        [OperationContract(IsOneWay = true)]
-        void GameEnding();
+        [OperationContract(IsOneWay = true)] void UpdateDrawn(string _drawn);
+        [OperationContract(IsOneWay = true)] void UpdateDiscard(string _discard);
+        [OperationContract(IsOneWay = true)] void UpdateContestantCard(string userName, string newCard, string oldCard, bool fromDrawn, string btnName, string objectName);
+        [OperationContract(IsOneWay = true)] void NewPlayerJoin(string[] _names);
+        [OperationContract(IsOneWay = true)] void PlayerDisconnected(string[] _names);
+        [OperationContract(IsOneWay = true)] void UpdateQueue(string userName, bool isReady, bool StartGame, bool hasEnoughPlayers);
+        [OperationContract(IsOneWay = true)] void UpdateGameState(Player[] _players); 
+        [OperationContract(IsOneWay = true)] void ResetClients();
+        [OperationContract(IsOneWay = true)] void NextTurn(Player[] _players);
+        [OperationContract(IsOneWay = true)] void sendResults(string[] names, int[] points);
+        [OperationContract(IsOneWay = true)] void SendWaitQueueFreeze();
+        [OperationContract(IsOneWay = true)] void SendMessage(string msg);
+        [OperationContract(IsOneWay = true)] void GameEnding();
     }
 
     [ServiceContract(CallbackContract = typeof(IGameCallBack))]
     public interface IGameSystem
     {
-        [OperationContract]
-        string Draw();
-
-        [OperationContract]
-        void ContestentSwap(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName);
-
-        [OperationContract]
-        void UpdateQueue(string username, bool isReady);
-
-        [OperationContract]
-        List<string> DrawThreeCards();
-
-        [OperationContract(IsOneWay = true)]
-        void Shuffle();
-
-        [OperationContract]
-        void GameState();
-
-        [OperationContract]
-        void ResetGame();
-
-        [OperationContract]
-        void StartGame();
-
-        [OperationContract]
-        void GetResults();
-
-        [OperationContract]
-        int CardValue(string card);
-
-        [OperationContract]
-        void Points(string[] _cards, string name);
-
-        [OperationContract]
-        int GetPoints(string name);
-
-        [OperationContract(IsOneWay = true)]
-        void UpdateTurn();
-
-        [OperationContract]
-        bool Join(string name);
-
-        [OperationContract(IsOneWay = true)]
-        void Leave(string name);
-
+        [OperationContract]                         string Draw();
+        [OperationContract]                         void ContestentSwap(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName);
+        [OperationContract]                         void UpdateQueue(string username, bool isReady);
+        [OperationContract]                         List<string> DrawThreeCards();
+        [OperationContract(IsOneWay = true)]        void Shuffle();
+        [OperationContract]                         void GameState();
+        [OperationContract]                         void ResetGame();
+        [OperationContract]                         void StartGame();
+        [OperationContract(IsOneWay = true)]        void GetResults();
+        [OperationContract]                         int CardValue(string card);
+        [OperationContract(IsOneWay = true)]        void Points(string[] _cards, string name);
+        [OperationContract]                         int GetPoints(string name);
+        [OperationContract(IsOneWay = true)]        void UpdateTurn();
+        [OperationContract]                         bool Join(string name);
+        [OperationContract(IsOneWay = true)]        void Leave(string name);
         int NumCards { [OperationContract] get; }
         int NumDecks { [OperationContract] get; [OperationContract] set; }
         string DiscardedCard { [OperationContract]get; [OperationContract]set; }
@@ -109,27 +51,22 @@ namespace GolfLibrary
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class GameSystem : IGameSystem
     {
-        // member variables
+        #region Service Local Variables
         private List<Card> cards = new List<Card>();
+        public List<Player> Players;
         private Dictionary<string, IGameCallBack> gameCallBacks = new Dictionary<string, IGameCallBack>();
         private Dictionary<string, IGameCallBack> gameWaitQueue = new Dictionary<string, IGameCallBack>();
-        private int numDecks = 1;
-        private int cardIdx, playerCount = 0, endGameCounter = 0;
+        private int cardIdx, playerCount = 0, endGameCounter = 0, numDecks = 1, _currentTurnPosition = 0, _lastRoundStoppingPoint;
         private string _drawnCard, _discardCard;
-        public List<Player> Players;
-        private bool _gameInProgrees = false;
-        private bool _lastRound = false;
-        private int _currentTurnPosition = 0, _lastRoundStoppingPoint;
-
-
-        // C'tors
+        private bool _gameInProgrees = false, _lastRound = false;
+        #endregion
+        #region Ctors
         public GameSystem()
         {
             cardIdx = 0;
             repopulate();
             Players = new List<Player>();
         }
-
         public GameSystem(int numOfDecks)
         {
             cardIdx = 0;
@@ -137,8 +74,9 @@ namespace GolfLibrary
             repopulate();
             Players = new List<Player>();
         }
-
+        #endregion
         #region GameCallBackSystem
+        // Join a game
         public bool Join(string name)
         {
             bool isValid = false;
@@ -150,14 +88,11 @@ namespace GolfLibrary
                 }
                 else if (char.IsLetterOrDigit(ch))
                     isValid = true;
-
             }
-
             if (char.IsLetter(name[0]))
                 isValid = true;
             else
                 isValid = false;
-
             // Unique name for the game
             if (gameCallBacks.ContainsKey(name.ToUpper()))
                 return false;
@@ -165,10 +100,8 @@ namespace GolfLibrary
                 return false;
             else
             {
-
                 // Retrieve a clients callback proxy
                 IGameCallBack gcb = OperationContext.Current.GetCallbackChannel<IGameCallBack>();
-
                 if (this.GameInProgress)
                 {
                     gameWaitQueue.Add(name.ToUpper(), gcb);
@@ -179,7 +112,6 @@ namespace GolfLibrary
                     gameCallBacks.Add(name.ToUpper(), gcb);
                     Players.Add(new Player(name.ToUpper(), false));
                     Console.WriteLine(name + " has connected.");
-
                     if (gameCallBacks.Count > 1)
                     {
                         foreach (IGameCallBack cb in gameCallBacks.Values)
@@ -190,37 +122,32 @@ namespace GolfLibrary
                 return true;
             }
         }
-
+        // Leave a game
         public void Leave(string name)
         {
             if (gameCallBacks.ContainsKey(name.ToUpper()))
             {
                 var p = Players.FirstOrDefault<Player>(player => player.Name == name.ToUpper());
-
                 Players.Remove((Player)p);
                 gameCallBacks.Remove(name.ToUpper());
                 Console.WriteLine(name + " has disconnected.");
-
                 if (gameCallBacks.Count > 0)
                 {
                     foreach (IGameCallBack cb in gameCallBacks.Values)
                         cb.PlayerDisconnected(gameCallBacks.Keys.ToArray());
                 }
-
                 this._gameInProgrees = false;
                 ResetGame();
             }
         }
-
+        // Update the queue and send to all clients
         public void UpdateQueue(string username, bool isReady)
         {
             int queue = 0;
             bool startGame = false;
             bool hasEnoughPlayers = false;
-
             if (Players.Count > 1)
                 hasEnoughPlayers = true;
-
             Players.All(p =>
             {
                 if (p.Name == username.ToUpper())
@@ -229,31 +156,18 @@ namespace GolfLibrary
                     ++queue;
                 return true;
             });
-
             if (queue == 0)
                 startGame = true;
-
             foreach (IGameCallBack gcb in gameCallBacks.Values)
                 gcb.UpdateQueue(username, isReady, startGame, hasEnoughPlayers);
         }
-
+        // Send the updated card, to all clients to show
         public void ContestentSwap(string userName, string newCard, string oldCard, bool fromDiscard, string btnName, string objectName)
         {
             foreach (IGameCallBack gcb in gameCallBacks.Values)
                 gcb.UpdateContestantCard(userName, newCard, oldCard, fromDiscard, btnName, objectName);
         }
-
-        private void updateAllUsers()
-        {
-        }
-
-
-
         #endregion
-
-
-
-        // public methods and properties
         // returns the next card
         public string Draw()
         {
@@ -262,17 +176,14 @@ namespace GolfLibrary
                 if (cardIdx == cards.Count())
                 {
                     throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.\n");
-
                 }
                 else
                 {
                     Console.WriteLine("Dealing the " + cards[cardIdx].Name + ".");
                     _drawnCard = cards[cardIdx].sName;
-
                     //Update all clients
                     foreach (IGameCallBack gcb in gameCallBacks.Values)
                         gcb.UpdateDrawn(this._drawnCard);
-
                     return cards[cardIdx++].sName;
                 }
             }
@@ -282,11 +193,7 @@ namespace GolfLibrary
                 return "shoe empty";
             }
         }
-
-        /// <summary>
-        /// Resets the game to a start point, after points
-        /// calculation
-        /// </summary>
+        // Resets the game to a start point, after points calculation
         public void ResetGame()
         {
             try
@@ -322,7 +229,7 @@ namespace GolfLibrary
             }
 
         }
-
+        // Format the name to mimic that of the clients username
         private string formatName(string _raw)
         {
             string refined = _raw;
@@ -331,7 +238,7 @@ namespace GolfLibrary
             else
                 return _raw;
         }
-
+        // Draw three cards for a client 
         public List<string> DrawThreeCards()
         {
             List<string> threecards;
@@ -358,11 +265,11 @@ namespace GolfLibrary
                 return new List<string>();
             }
         }
-
+        // Assign the points, to the players
         private DateTime _pointsUpdate = DateTime.Now;
         public void Points(string[] _cards, string name)
         {
-            if (DateTime.Now - _pointsUpdate > TimeSpan.FromSeconds(1))
+            if (DateTime.Now - _pointsUpdate > TimeSpan.FromMilliseconds(.05))
             {
                 foreach (Player player in Players)
                 {
@@ -377,8 +284,6 @@ namespace GolfLibrary
                         break;
                     }
                 }
-
-
                 GameState();
                 _pointsUpdate = DateTime.Now;
             }
@@ -394,7 +299,7 @@ namespace GolfLibrary
             //Bad Value
             return -10;
         }
-
+        // Send the results to all clients
         public void GetResults()
         {
             ++endGameCounter;
@@ -415,7 +320,7 @@ namespace GolfLibrary
             }
             
         }
-
+        // Retreive points from card name
         public int GetPoints(string name)
         {
             foreach (Player player in Players)
