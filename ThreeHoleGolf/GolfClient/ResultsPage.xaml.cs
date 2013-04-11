@@ -90,7 +90,7 @@ namespace GolfClient
 
                     //Order all of the plyaers by points
                     players = players.OrderBy(x => x.Value).ToList();
-                    
+
                     //Display all of the players in correct order on the results page.
                     for (int i = 0; i < players.Count; ++i)
                     {
