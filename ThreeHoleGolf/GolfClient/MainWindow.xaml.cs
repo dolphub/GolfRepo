@@ -431,7 +431,6 @@ namespace GolfClient
                 "Each ace counts 1 point.\n" + "Each two counts minus two points.\n" + "Each numeral card from 3 to 10 scores face value.\n" +
                 "Each Jack or Queen scores 10 points.\n" + "Each King scores zero points.\n" +
                 "Each Joker scores -2 points.\n" +
-                "A pair of equal cards in the same column scores zero points for the column (even if the equal cards are twos).\n" +
                 "The player who has the lowest cumulative score after nine deals wins.";
 
             form.Controls.Add( rtb );
